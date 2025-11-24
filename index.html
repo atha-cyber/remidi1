@@ -88,7 +88,8 @@
                          onerror="this.style.display='none'">
 
                     <!-- SECRET ADMIN TRIGGER (CLICK 3 TIMES) -->
-                    <div id="admin-trophy" onclick="window.triggerAdminMode()" class="bg-gradient-to-br from-primary to-secondary p-2.5 rounded-xl text-white shadow-lg shadow-indigo-500/20 cursor-pointer active:scale-90 transition-transform select-none">
+                    <!-- PERUBAHAN: Onclick dihapus/diamankan agar tidak memicu reset -->
+                    <div id="admin-trophy" class="bg-gradient-to-br from-primary to-secondary p-2.5 rounded-xl text-white shadow-lg shadow-indigo-500/20 cursor-default select-none">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path></svg>
                     </div>
                     <div>
@@ -187,7 +188,7 @@
         import { getFirestore, collection, doc, getDocs, setDoc, updateDoc, increment, onSnapshot, query, orderBy, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // Konfigurasi Firebase Baru (Dari User)
+        // Konfigurasi Firebase
         const firebaseConfig = {
           apiKey: "AIzaSyDy6E0FpxFAV8Fq2ayO1UWd2UMC19xLHgM",
           authDomain: "vooting-guru.firebaseapp.com",
@@ -204,6 +205,10 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
+        // --- SAFETY CONFIGURATION ---
+        // SET INI KE 'true' AGAR DATA TIDAK BISA DI-RESET ATAU DI-SEED ULANG SECARA TIDAK SENGAJA
+        const IS_PRODUCTION = true; 
+        
         // Constants
         const STORAGE_KEY_STATUS = 'poll_firebase_status_v1';
         const COLLECTION_NAME = 'candidates';
@@ -233,11 +238,9 @@
         // --- INIT FIREBASE ---
         async function init() {
             try {
-                // 1. Auth (Anonymous) untuk akses database
                 await signInAnonymously(auth);
                 console.log("Connected to Firebase");
 
-                // 2. Cek status lokal (One Device One Vote)
                 if (localStorage.getItem(STORAGE_KEY_STATUS) === 'true') {
                     hasVoted = true;
                     updateStatusUI();
@@ -245,25 +248,27 @@
                     updateStatusUI();
                 }
 
-                // 3. Listen to Real-time Data
+                // Listen to Real-time Data
                 const q = query(collection(db, COLLECTION_NAME));
-                onSnapshot(q, (snapshot) => {
+                onSnapshot(q, async (snapshot) => {
                     if (snapshot.empty) {
-                        // Jika database kosong, isi data awal (Seeding)
-                        seedDatabase();
+                        // JIKA KOSONG: Cek apakah boleh seeding
+                        // Hanya jalan jika BUKAN mode production
+                        if (!IS_PRODUCTION) {
+                            seedDatabase();
+                        } else {
+                            console.warn("Database kosong, tapi Seeding dimatikan karena Mode Produksi.");
+                        }
                     } else {
-                        // Update data lokal saat ada perubahan di server
                         const liveData = [];
                         snapshot.forEach((doc) => {
                             liveData.push(doc.data());
                         });
                         
-                        // Sortir agar id urut untuk render list (bukan berdasarkan vote dulu)
                         teachers = liveData.sort((a, b) => a.id - b.id);
                         
                         renderTeachers(document.getElementById('search-input').value);
                         updateTotalVotes();
-                        // Jika modal terbuka, update leaderboard juga
                         if(document.getElementById('leaderboard-modal').classList.contains('active')){
                             renderLeaderboard();
                         }
@@ -275,57 +280,44 @@
 
             } catch (e) {
                 console.error("Init Error:", e);
-                
-                // TAMPILKAN ERROR JELAS JIKA AUTH ANONIM BELUM DIAKTIFKAN
-                const container = document.getElementById('teachers-container');
-                
-                if (e.code === 'auth/admin-restricted-operation' || e.code === 'auth/operation-not-allowed') {
-                    container.innerHTML = `
-                        <div class="flex flex-col items-center justify-center py-10 px-4 text-center">
-                            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
-                                <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                            </div>
-                            <h3 class="text-lg font-bold text-slate-800 mb-2">Akses Database Ditolak</h3>
-                            <p class="text-sm text-slate-500 max-w-md mb-6">
-                                Fitur <strong>Anonymous Auth</strong> belum diaktifkan di Firebase Console.<br><br>
-                                <strong>Solusi untuk Admin:</strong><br>
-                                1. Buka Firebase Console > Build > Authentication.<br>
-                                2. Klik tab "Sign-in method".<br>
-                                3. Aktifkan provider "Anonymous".
-                            </p>
-                            <button onclick="location.reload()" class="px-4 py-2 bg-slate-800 text-white rounded-lg text-sm font-bold">Coba Lagi</button>
-                        </div>
-                    `;
-                } else {
-                    container.innerHTML = `<div class="text-center py-10 text-red-400">Koneksi Error: ${e.message}</div>`;
-                }
-                
                 showToast("Koneksi Database Gagal", true);
             }
         }
 
-        // Fungsi Isi Database Awal (Hanya jalan sekali jika kosong)
+        // --- SAFE SEEDING FUNCTION ---
+        // Fungsi ini sekarang mengecek double ke server sebelum menulis
         async function seedDatabase() {
-            console.log("Seeding database...");
+            if (IS_PRODUCTION) return; // Stop jika mode produksi
+
+            console.log("Memulai Safe Seeding...");
+            // Cek sekali lagi secara manual ke server (bukan cache)
+            const snapshot = await getDocs(collection(db, COLLECTION_NAME));
+            
+            if (!snapshot.empty) {
+                console.log("Database ternyata sudah ada isi. Seeding dibatalkan.");
+                return;
+            }
+
+            console.log("Database benar-benar kosong. Mengisi data...");
             const batch = writeBatch(db);
             
             NAMES.forEach((name, index) => {
-                const id = (index + 1).toString(); // Gunakan string ID '1', '2' dst
+                const id = (index + 1).toString();
                 const docRef = doc(db, COLLECTION_NAME, id);
                 batch.set(docRef, {
                     id: index + 1,
                     name: name,
                     subject: "Staf Pengajar",
-                    votes: 0,
+                    votes: 0, // Inisialisasi 0
                     color: COLORS[index % COLORS.length]
                 });
             });
 
             await batch.commit();
-            console.log("Database seeded!");
+            console.log("Database seeded successfully!");
         }
 
-        // --- RENDER FUNCTIONS ---
+        // --- RENDER FUNCTIONS (Sama seperti sebelumnya) ---
         window.renderTeachers = function(filter = "") {
             const container = document.getElementById('teachers-container');
             if (!container) return;
@@ -407,24 +399,21 @@
 
         // --- ACTIONS ---
         window.vote = async function(id) {
-            // Cek lokal dulu agar UX cepat
             if (hasVoted) return showToast("Anda sudah memilih!", true);
             if (localStorage.getItem(STORAGE_KEY_STATUS) === 'true') return showToast("Perangkat ini sudah memilih.", true);
             
             if (!confirm("Konfirmasi Pilihan:\nYakin memilih guru ini?")) return;
 
-            // Optimistic UI Update (Agar terasa instan)
+            // Optimistic UI
             hasVoted = true;
             updateStatusUI();
             
             try {
-                // Update ke Firebase (Atomic Increment)
                 const docRef = doc(db, COLLECTION_NAME, id.toString());
                 await updateDoc(docRef, {
                     votes: increment(1)
                 });
 
-                // Simpan status lokal
                 localStorage.setItem(STORAGE_KEY_STATUS, 'true');
                 showToast("Suara Berhasil Masuk!");
                 
@@ -432,58 +421,22 @@
 
             } catch (error) {
                 console.error("Vote Error:", error);
-                hasVoted = false; // Revert jika gagal
+                hasVoted = false; // Revert
                 updateStatusUI();
                 showToast("Gagal mengirim suara. Periksa koneksi.", true);
             }
         }
 
-        // --- ADMIN RESET ---
-        let adminClickCount = 0;
-        let adminClickTimer;
-
-        window.triggerAdminMode = function() {
-            const trophy = document.getElementById('admin-trophy');
-            trophy.classList.add('scale-90');
-            setTimeout(() => trophy.classList.remove('scale-90'), 150);
-
-            adminClickCount++;
-            clearTimeout(adminClickTimer);
-            adminClickTimer = setTimeout(() => { adminClickCount = 0; }, 2000);
-
-            if (adminClickCount >= 3) {
-                resetData();
-                adminClickCount = 0;
-            }
+        // --- ADMIN RESET (DIMATIKAN/DISABLED) ---
+        // Kode ini sengaja dikomentari/diubah agar tidak bisa dieksekusi di production
+        /* window.triggerAdminMode = function() {
+            // FITUR RESET DIMATIKAN DEMI KEAMANAN
+            console.log("Admin reset disabled in production mode.");
         }
+        */
 
-        async function resetData() {
-            const password = prompt("🔐 ADMIN ACCESS (ONLINE)\nMasukkan Password Reset:");
-            if (password === "4444") {
-                if (confirm("⚠️ PERINGATAN KERAS\nSemua data di SERVER akan dihapus jadi 0.\nSemua orang bisa memilih ulang.\nLanjutkan?")) {
-                    try {
-                        showToast("Mereset data server...", false);
-                        
-                        // Batch update semua dokumen jadi 0
-                        const batch = writeBatch(db);
-                        teachers.forEach(t => {
-                            const docRef = doc(db, COLLECTION_NAME, t.id.toString());
-                            batch.update(docRef, { votes: 0 });
-                        });
-                        await batch.commit();
-
-                        // Hapus status lokal admin ini
-                        localStorage.removeItem(STORAGE_KEY_STATUS);
-                        location.reload();
-                    } catch (e) {
-                        console.error("Reset Error:", e);
-                        showToast("Gagal mereset server.", true);
-                    }
-                }
-            } else if (password !== null) {
-                showToast("Password Salah!", true);
-            }
-        }
+        // Fungsi Reset yang berbahaya dihapus dari akses global window
+        // Agar tidak bisa dipanggil lewat console browser
 
         // --- UI UTILS ---
         function updateTotalVotes() {
@@ -532,7 +485,6 @@
 
         document.getElementById('search-input').addEventListener('input', (e) => window.renderTeachers(e.target.value));
 
-        // Start
         init();
     </script>
 </body>
