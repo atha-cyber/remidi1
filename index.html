@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="google" content="notranslate">
-    <title>Ujian Sekolah (Mode Tryout Support)</title>
+    <title>Ujian Sekolah (Remedial Support)</title>
     <style>
         :root {
             --primary: #4f46e5;
@@ -114,6 +114,8 @@
             background: rgba(255,255,255,0.9); display: none; justify-content: center;
             align-items: center; z-index: 10000; font-weight: bold; color: var(--primary);
             flex-direction: column;
+            text-align: center;
+            padding: 20px;
         }
         
         /* RULE OVERLAY STYLES */
@@ -169,6 +171,7 @@
         
         <ul class="rule-list">
             <li>🚫 <b>Dilarang membuka tab lain</b> atau keluar dari aplikasi ini.</li>
+            <li>📍 <b>Wajib berada di lingkungan sekolah</b>. GPS akan dicek.</li>
             <li>👀 Sistem memiliki <b>pendeteksi kecurangan</b> otomatis.</li>
             <li>⚠️ Jika melanggar lebih dari <b>3 kali</b>, jawaban akan dikirim <b>OTOMATIS</b> dan ujian berakhir.</li>
             <li>💾 Jawaban tersimpan saat <b>Refresh</b>, tapi <b>HILANG</b> jika tab/browser <b>DITUTUP</b>.</li>
@@ -182,7 +185,7 @@
 
 <div id="loader" class="loading-overlay">
     <div class="spinner"></div>
-    <div>Sedang memproses...</div>
+    <div id="loader-text">Sedang memproses...</div>
 </div>
 
 <div class="container">
@@ -191,7 +194,7 @@
             <img src="https://raw.githubusercontent.com/atha-cyber/logo-/5eeaaecc00cf02080842f1cd6f4fc7bf13fe7f18/images.jfif" alt="Logo" class="school-logo">
             <div class="header-text">
                 <h1>SMP NEGERI 4 PANDAK</h1>
-                <p>Ujian Sekolah Terpadu</p>
+                <p>Remedial & Asesmen Sumatif</p>
             </div>
         </div>
     </div>
@@ -201,45 +204,71 @@
         <h3>📋 Data Diri Siswa</h3>
         
         <div class="form-group" style="background: #e0f2fe; padding: 10px; border-radius: 8px; border: 1px solid #bae6fd;">
-            <label style="color: #0284c7;">Pilih Mata Pelajaran & Kelas</label>
+            <label style="color: #0284c7;">Pilih Mata Pelajaran (Sesuai Jadwal)</label>
             <select id="examLevel" onchange="changeExamLevel(this.value)" style="border-color: #0284c7; font-weight: bold; color: #0369a1;">
                 <option value="">-- Pilih Paket Soal --</option>
                 
-                <optgroup label="Bahasa Indonesia">
+                <!-- SELASA 9 DESEMBER -->
+                <optgroup label="SELASA - Pend. Agama & Budi Pekerti (PABP)">
+                    <option value="7-PABP">Kelas 7 - PABP</option>
+                    <option value="8-PABP">Kelas 8 - PABP</option>
+                    <option value="9-PABP">Kelas 9 - PABP</option>
+                </optgroup>
+                <optgroup label="SELASA - Informatika">
+                    <option value="7-INFO">Kelas 7 - Informatika</option>
+                    <option value="8-INFO">Kelas 8 - Informatika</option>
+                    <option value="9-INFO">Kelas 9 - Informatika</option>
+                </optgroup>
+                <optgroup label="SELASA - Bahasa Indonesia">
                     <option value="7-INDO">Kelas 7 - Bahasa Indonesia</option>
                     <option value="8-INDO">Kelas 8 - Bahasa Indonesia</option>
                     <option value="9-INDO">Kelas 9 - Bahasa Indonesia</option>
                 </optgroup>
-
-                <optgroup label="Bahasa Inggris">
-                    <option value="7-ING">Kelas 7 - Bahasa Inggris</option>
-                    <option value="8-ING">Kelas 8 - Bahasa Inggris</option>
-                    <option value="9-ING">Kelas 9 - Bahasa Inggris</option>
-                </optgroup>
-
-                <optgroup label="IPA (Ilmu Pengetahuan Alam)">
-                    <option value="7-IPA">Kelas 7 - IPA</option>
-                    <option value="8-IPA">Kelas 8 - IPA</option>
-                    <option value="9-IPA">Kelas 9 - IPA</option>
-                </optgroup>
-
-                <optgroup label="IPS (Ilmu Pengetahuan Sosial)">
-                    <option value="7-IPS">Kelas 7 - IPS</option>
-                    <option value="8-IPS">Kelas 8 - IPS</option>
-                    <option value="9-IPS">Kelas 9 - IPS</option>
-                </optgroup>
-
-                <optgroup label="PKN (Pendidikan Kewarganegaraan)">
+                <optgroup label="SELASA - Pend. Pancasila (PKN)">
                     <option value="7-PKN">Kelas 7 - PKN</option>
                     <option value="8-PKN">Kelas 8 - PKN</option>
                     <option value="9-PKN">Kelas 9 - PKN</option>
                 </optgroup>
 
-                <optgroup label="PJOK (Penjasorkes)">
+                <!-- RABU 10 DESEMBER -->
+                <optgroup label="RABU - Matematika">
+                    <option value="7-MTK">Kelas 7 - Matematika</option>
+                    <option value="8-MTK">Kelas 8 - Matematika</option>
+                    <option value="9-MTK">Kelas 9 - Matematika</option>
+                </optgroup>
+                <optgroup label="RABU - PJOK">
                     <option value="7-PJOK">Kelas 7 - PJOK</option>
                     <option value="8-PJOK">Kelas 8 - PJOK</option>
                     <option value="9-PJOK">Kelas 9 - PJOK</option>
                 </optgroup>
+                <optgroup label="RABU - Bahasa Inggris">
+                    <option value="7-ING">Kelas 7 - Bahasa Inggris</option>
+                    <option value="8-ING">Kelas 8 - Bahasa Inggris</option>
+                    <option value="9-ING">Kelas 9 - Bahasa Inggris</option>
+                </optgroup>
+                <optgroup label="RABU - Bahasa Jawa">
+                    <option value="7-BJAWA">Kelas 7 - Bahasa Jawa</option>
+                    <option value="8-BJAWA">Kelas 8 - Bahasa Jawa</option>
+                    <option value="9-BJAWA">Kelas 9 - Bahasa Jawa</option>
+                </optgroup>
+
+                <!-- KAMIS 11 DESEMBER -->
+                <optgroup label="KAMIS - IPA">
+                    <option value="7-IPA">Kelas 7 - IPA</option>
+                    <option value="8-IPA">Kelas 8 - IPA</option>
+                    <option value="9-IPA">Kelas 9 - IPA</option>
+                </optgroup>
+                <optgroup label="KAMIS - IPS">
+                    <option value="7-IPS">Kelas 7 - IPS</option>
+                    <option value="8-IPS">Kelas 8 - IPS</option>
+                    <option value="9-IPS">Kelas 9 - IPS</option>
+                </optgroup>
+                <optgroup label="KAMIS - Seni Budaya">
+                    <option value="7-SENBUD">Kelas 7 - Seni Budaya</option>
+                    <option value="8-SENBUD">Kelas 8 - Seni Budaya</option>
+                    <option value="9-SENBUD">Kelas 9 - Seni Budaya</option>
+                </optgroup>
+
             </select>
         </div>
 
@@ -313,15 +342,40 @@
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <div>
                         <h4 style="margin:0; color: #047857;">🚀 Mode Tryout (Global)</h4>
-                        <small style="color:#065f46;">Abaikan semua jadwal, buka semua soal sekarang.</small>
+                        <small style="color:#065f46;">Abaikan jadwal & radius, buka semua.</small>
                     </div>
                     <button id="btn-tryout-toggle" onclick="toggleTryoutMode()" style="padding:10px 20px; border-radius:20px; font-weight:bold; border:none; cursor:pointer; background:#e5e7eb; color:#374151;">Memuat...</button>
                 </div>
             </div>
 
+            <!-- SECTION RADIUS CHECK -->
+            <div style="background: #fff7ed; border: 1px solid #fdba74; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <h4 style="margin:0; color: #c2410c;">📡 Cek Lokasi (Anti-Joki)</h4>
+                        <small style="color:#9a3412;">Wajib radius 400m dari sekolah.</small>
+                    </div>
+                    <button id="btn-radius-toggle" onclick="toggleRadiusMode()" style="padding:10px 20px; border-radius:20px; font-weight:bold; border:none; cursor:pointer; background:#e5e7eb; color:#374151;">Memuat...</button>
+                </div>
+                <div style="font-size:0.75rem; color:#c2410c; margin-top:5px;">
+                    Matikan fitur ini jika GPS error atau cuaca buruk.
+                </div>
+            </div>
+
+            <!-- SECTION AUTO JADWAL -->
+            <div style="background: #fdf2f8; border: 1px solid #fbcfe8; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                <h4 style="margin:0 0 5px 0; color: #db2777;">🤖 Auto-Jadwal PDF</h4>
+                <p style="font-size:0.8rem; color:#9d174d; margin-bottom:10px;">
+                    Klik tombol ini untuk mengatur <b>Semua Jadwal</b> sesuai PDF Remedial (9-11 Des 2025).
+                </p>
+                <button onclick="setJadwalSesuaiPDF()" style="background:#be185d; color:white; border:none; padding:10px; width:100%; border-radius:6px; font-weight:bold; cursor:pointer;">
+                    📅 Set Jadwal Default Sesuai PDF
+                </button>
+            </div>
+
             <!-- SECTION JADWAL -->
             <div style="background: #f0f9ff; border: 1px solid #bae6fd; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                <h4 style="margin:0 0 10px 0; color: #0369a1;">📅 Atur Jadwal (Per Mata Pelajaran)</h4>
+                <h4 style="margin:0 0 10px 0; color: #0369a1;">📅 Atur Jadwal Manual</h4>
                 <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 10px;">Berlaku jika Mode Tryout <b>MATI</b>.</p>
                 
                 <div id="admin-schedule-list" style="background: white; border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 10px;">
@@ -329,7 +383,7 @@
                 </div>
             </div>
 
-            <button onclick="downloadCSV()" style="background:#059669; color:white; border:none; border-radius:8px;">📥 Download Excel</button>
+            <button onclick="downloadCSV()" style="background:#059669; color:white; border:none; border-radius:8px;">📥 Download Excel (Otomatis Urut)</button>
             <button onclick="hapusData()" style="background:#dc2626; color:white; border:none; border-radius:8px;">🗑️ Hapus Semua Data Nilai</button>
             <button onclick="tutupAdmin()" style="background:#6b7280; color:white; border:none; border-radius:8px;">Tutup Panel</button>
         </div>
@@ -367,8 +421,14 @@
     // --- KONFIGURASI KOLEKSI ---
     const COLLECTION_NAME = 'exam_results_all_subjects_v2';
     const CONFIG_COLLECTION = 'exam_config'; 
-    const SCHEDULE_DOC = 'schedule'; // Satu dokumen untuk semua config jadwal + tryout mode
+    const SCHEDULE_DOC = 'schedule'; 
     const passwordGuru = "!@#$%^&*()"; 
+
+    // --- KONFIGURASI LOKASI SEKOLAH ---
+    // 7°55'37.2"S 110°17'52.1"E => Decimal: -7.927000, 110.297806
+    const SCHOOL_LAT = -7.927000;
+    const SCHOOL_LNG = 110.297806;
+    const MAX_DISTANCE_METERS = 400;
 
     // --- BANK SOAL LENGKAP ---
     const DATA_BANK_SOAL = {
@@ -509,17 +569,138 @@
             { id: 953, tanya: 'Pukulan pertama dalam permainan bulu tangkis disebut...', opsi: {A: "Smash", B: "Lob", C: "Service", D: "Dropshot"}, kunci: "C" },
             { id: 954, tanya: 'Gerakan guling depan sering disebut dengan istilah...', opsi: {A: "Back roll", B: "Forward roll", C: "Tiger sprong", D: "Headstand"}, kunci: "B" },
             { id: 955, tanya: 'Penyakit HIV/AIDS menyerang sistem...', opsi: {A: "Pencernaan", B: "Pernapasan", C: "Kekebalan tubuh", D: "Saraf"}, kunci: "C" }
+        ],
+
+        // ================= PABP (PENDIDIKAN AGAMA) [NEW] =================
+        "7-PABP": [
+            { id: 761, tanya: 'Rukun Iman ada berapa?', opsi: {A: "4", B: "5", C: "6", D: "7"}, kunci: "C" },
+            { id: 762, tanya: 'Sifat wajib bagi Allah yang berarti "Ada" adalah...', opsi: {A: "Wujud", B: "Qidam", C: "Baqa", D: "Wahdaniyat"}, kunci: "A" },
+            { id: 763, tanya: 'Nabi terakhir utusan Allah adalah...', opsi: {A: "Nabi Isa", B: "Nabi Musa", C: "Nabi Muhammad SAW", D: "Nabi Ibrahim"}, kunci: "C" },
+            { id: 764, tanya: 'Perilaku jujur disebut juga...', opsi: {A: "Amanah", B: "Siddiq", C: "Fatonah", D: "Tabligh"}, kunci: "B" },
+            { id: 765, tanya: 'Salat yang dikerjakan pada waktu siang hari adalah...', opsi: {A: "Subuh", B: "Maghrib", C: "Dzuhur", D: "Isya"}, kunci: "C" }
+        ],
+        "8-PABP": [
+            { id: 861, tanya: 'Meyakini adanya hari kiamat adalah rukun iman ke...', opsi: {A: "3", B: "4", C: "5", D: "6"}, kunci: "C" },
+            { id: 862, tanya: 'Kitab suci yang diturunkan kepada Nabi Daud AS adalah...', opsi: {A: "Taurat", B: "Zabur", C: "Injil", D: "Al-Quran"}, kunci: "B" },
+            { id: 863, tanya: 'Puasa wajib bagi umat Islam dilaksanakan pada bulan...', opsi: {A: "Syawal", B: "Rajab", C: "Ramadhan", D: "Muharram"}, kunci: "C" },
+            { id: 864, tanya: 'Sikap rendah hati disebut...', opsi: {A: "Takabur", B: "Tawadhu", C: "Hasad", D: "Riya"}, kunci: "B" },
+            { id: 865, tanya: 'Minuman keras hukumnya...', opsi: {A: "Halal", B: "Makruh", C: "Mubah", D: "Haram"}, kunci: "D" }
+        ],
+        "9-PABP": [
+            { id: 961, tanya: 'Qada dan Qadar berhubungan dengan...', opsi: {A: "Nasib", B: "Takdir", C: "Rezeki", D: "Umur"}, kunci: "B" },
+            { id: 962, tanya: 'Hari raya kurban disebut juga Idul...', opsi: {A: "Fitri", B: "Adha", C: "Milad", D: "Qurban"}, kunci: "B" },
+            { id: 963, tanya: 'Haji merupakan rukun Islam ke...', opsi: {A: "2", B: "3", C: "4", D: "5"}, kunci: "D" },
+            { id: 964, tanya: 'Sikap optimis adalah...', opsi: {A: "Mudah putus asa", B: "Yakin akan keberhasilan", C: "Pasrah", D: "Ragu-ragu"}, kunci: "B" },
+            { id: 965, tanya: 'Zakat yang dikeluarkan sebelum shalat Idul Fitri adalah zakat...', opsi: {A: "Mal", B: "Penghasilan", C: "Fitrah", D: "Emas"}, kunci: "C" }
+        ],
+
+        // ================= INFORMATIKA [NEW] =================
+        "7-INFO": [
+            { id: 771, tanya: 'Perangkat keras komputer disebut...', opsi: {A: "Software", B: "Hardware", C: "Brainware", D: "Freeware"}, kunci: "B" },
+            { id: 772, tanya: 'Tombol untuk menyalin (copy) adalah...', opsi: {A: "Ctrl + C", B: "Ctrl + V", C: "Ctrl + X", D: "Ctrl + P"}, kunci: "A" },
+            { id: 773, tanya: 'Contoh sistem operasi adalah...', opsi: {A: "Microsoft Word", B: "Windows", C: "Paint", D: "Google Chrome"}, kunci: "B" },
+            { id: 774, tanya: 'Alat untuk mengetik pada komputer adalah...', opsi: {A: "Mouse", B: "Monitor", C: "Keyboard", D: "Printer"}, kunci: "C" },
+            { id: 775, tanya: 'Otak dari komputer adalah...', opsi: {A: "RAM", B: "Harddisk", C: "CPU (Processor)", D: "VGA"}, kunci: "C" }
+        ],
+        "8-INFO": [
+            { id: 871, tanya: 'Jaringan komputer yang mencakup wilayah dunia adalah...', opsi: {A: "LAN", B: "MAN", C: "WAN/Internet", D: "PAN"}, kunci: "C" },
+            { id: 872, tanya: 'Media sosial untuk berbagi video pendek vertikal adalah...', opsi: {A: "Facebook", B: "TikTok", C: "Twitter", D: "LinkedIn"}, kunci: "B" },
+            { id: 873, tanya: 'Ekstensi file gambar adalah...', opsi: {A: ".docx", B: ".mp3", C: ".jpg", D: ".exe"}, kunci: "C" },
+            { id: 874, tanya: 'Aplikasi pengolah angka disebut...', opsi: {A: "Microsoft Word", B: "Microsoft Excel", C: "PowerPoint", D: "Paint"}, kunci: "B" },
+            { id: 875, tanya: 'Menyimpan data di internet disebut...', opsi: {A: "Cloud Storage", B: "Flashdisk", C: "Harddisk", D: "CD Room"}, kunci: "A" }
+        ],
+        "9-INFO": [
+            { id: 971, tanya: 'Sistem bilangan berbasis 2 (0 dan 1) disebut...', opsi: {A: "Desimal", B: "Oktal", C: "Biner", D: "Heksadesimal"}, kunci: "C" },
+            { id: 972, tanya: 'Algoritma sering digambarkan dengan...', opsi: {A: "Peta", B: "Flowchart", C: "Grafik", D: "Lukisan"}, kunci: "B" },
+            { id: 973, tanya: 'Browser untuk berselancar di internet contohnya...', opsi: {A: "Photoshop", B: "Google Chrome", C: "Winamp", D: "Calculator"}, kunci: "B" },
+            { id: 974, tanya: 'Kejahatan di dunia maya disebut...', opsi: {A: "Cybercrime", B: "Robbery", C: "Corruption", D: "Bullying"}, kunci: "A" },
+            { id: 975, tanya: 'Bahasa pemrograman yang populer untuk web adalah...', opsi: {A: "HTML", B: "English", C: "Bahasa", D: "Sunda"}, kunci: "A" }
+        ],
+
+        // ================= MATEMATIKA [NEW] =================
+        "7-MTK": [
+            { id: 781, tanya: 'Hasil dari -5 + 12 adalah...', opsi: {A: "-7", B: "7", C: "17", D: "-17"}, kunci: "B" },
+            { id: 782, tanya: 'Bangun datar yang memiliki 3 sisi disebut...', opsi: {A: "Persegi", B: "Lingkaran", C: "Segitiga", D: "Trapesium"}, kunci: "C" },
+            { id: 783, tanya: 'KPK dari 4 dan 6 adalah...', opsi: {A: "10", B: "12", C: "24", D: "2"}, kunci: "B" },
+            { id: 784, tanya: 'Sudut siku-siku besarnya ... derajat.', opsi: {A: "45", B: "90", C: "180", D: "360"}, kunci: "B" },
+            { id: 785, tanya: 'Rumus luas persegi panjang adalah...', opsi: {A: "s x s", B: "p x l", C: "a x t", D: "pi x r x r"}, kunci: "B" }
+        ],
+        "8-MTK": [
+            { id: 881, tanya: 'Rumus Pythagoras pada segitiga siku-siku adalah...', opsi: {A: "a+b=c", B: "a^2+b^2=c^2", C: "a^2-b^2=c^2", D: "axb=c"}, kunci: "B" },
+            { id: 882, tanya: 'Benda berbentuk tabung contohnya...', opsi: {A: "Bola", B: "Drum Minyak", C: "Piramida", D: "Kotak Kardus"}, kunci: "B" },
+            { id: 883, tanya: 'Peluang munculnya angka pada pelemparan satu koin adalah...', opsi: {A: "1", B: "1/2", C: "1/4", D: "0"}, kunci: "B" },
+            { id: 884, tanya: 'Garis yang menghubungkan dua titik pada lingkaran melalui pusat disebut...', opsi: {A: "Jari-jari", B: "Diameter", C: "Busur", D: "Tali busur"}, kunci: "B" },
+            { id: 885, tanya: 'Nilai rata-rata disebut juga...', opsi: {A: "Modus", B: "Median", C: "Mean", D: "Jangkauan"}, kunci: "C" }
+        ],
+        "9-MTK": [
+            { id: 981, tanya: 'Hasil dari 2 pangkat 3 adalah...', opsi: {A: "6", B: "8", C: "9", D: "5"}, kunci: "B" },
+            { id: 982, tanya: 'Bentuk baku dari 0,005 adalah...', opsi: {A: "5 x 10^-3", B: "5 x 10^3", C: "50 x 10^-2", D: "0,5 x 10^-2"}, kunci: "A" },
+            { id: 983, tanya: 'Rumus ABC digunakan untuk mencari akar persamaan...', opsi: {A: "Linear", B: "Kuadrat", C: "Lingkaran", D: "Garis"}, kunci: "B" },
+            { id: 984, tanya: 'Bangun ruang sisi lengkung contohnya...', opsi: {A: "Kubus", B: "Balok", C: "Kerucut", D: "Limas"}, kunci: "C" },
+            { id: 985, tanya: 'Transformasi geometri yang berarti pergeseran disebut...', opsi: {A: "Refleksi", B: "Rotasi", C: "Translasi", D: "Dilatasi"}, kunci: "C" }
+        ],
+
+        // ================= BAHASA JAWA [NEW] =================
+        "7-BJAWA": [
+            { id: 791, tanya: 'Basa kramane "Aku" yaiku...', opsi: {A: "Kula", B: "Dalem", C: "Ingsun", D: "Sampeyan"}, kunci: "A" },
+            { id: 792, tanya: 'Aksara Jawa cacahé ana...', opsi: {A: "10", B: "15", C: "20", D: "25"}, kunci: "C" },
+            { id: 793, tanya: 'Bapak tindak kantor nitih montor. Ukara iki nggunakake basa...', opsi: {A: "Ngoko Lugu", B: "Ngoko Alus", C: "Krama Lugu", D: "Krama Alus"}, kunci: "D" },
+            { id: 794, tanya: 'Punakawan sing awake lemu yaiku...', opsi: {A: "Semar", B: "Gareng", C: "Petruk", D: "Bagong"}, kunci: "A" },
+            { id: 795, tanya: 'Tembang macapat sing nggambarake wong lagi lair yaiku...', opsi: {A: "Mijil", B: "Maskumambang", C: "Sinom", D: "Pocung"}, kunci: "A" }
+        ],
+        "8-BJAWA": [
+            { id: 891, tanya: 'Crita rakyat "Roro Jonggrang" asale saka...', opsi: {A: "Jawa Barat", B: "Jawa Tengah/DIY", C: "Jawa Timur", D: "Bali"}, kunci: "B" },
+            { id: 892, tanya: 'Sandhangan swara "wulu" munine...', opsi: {A: "i", B: "u", C: "e", D: "o"}, kunci: "A" },
+            { id: 893, tanya: 'Guru gatra tembang Gambuh ana...', opsi: {A: "4", B: "5", C: "6", D: "7"}, kunci: "B" },
+            { id: 894, tanya: 'Pidhato ing basa Jawa diarani...', opsi: {A: "Sesorah", B: "Geguritan", C: "Cangkriman", D: "Parikan"}, kunci: "A" },
+            { id: 895, tanya: 'Pandawa sing paling barep (mbarep) yaiku...', opsi: {A: "Yudhistira", B: "Bima", C: "Arjuna", D: "Nakula"}, kunci: "A" }
+        ],
+        "9-BJAWA": [
+            { id: 991, tanya: 'Upacara adat Jawa kanggo bayi umur 7 wulan diarani...', opsi: {A: "Tedhak Siten", B: "Mitoni", C: "Brokohan", D: "Sepasaran"}, kunci: "A" },
+            { id: 992, tanya: 'Pranatacara yaiku wong sing ngatur...', opsi: {A: "Wayang", B: "Gamelan", C: "Adicara", D: "Konsumsi"}, kunci: "C" },
+            { id: 993, tanya: 'Aksara Murda digunakake kanggo nulis...', opsi: {A: "Jeneng wong/pangkat", B: "Angka", C: "Kewan", D: "Tanduran"}, kunci: "A" },
+            { id: 994, tanya: 'Serat Wedhatama anggitane...', opsi: {A: "Mangkunegara IV", B: "Pakubuwana IV", C: "Ranggawarsita", D: "Yasadipura"}, kunci: "A" },
+            { id: 995, tanya: ' unen-unen "Jer basuki mawa beya" tegese...', opsi: {A: "Kabeh butuh ragat", B: "Urip iku susah", C: "Wong pinter kalah karo wong bejo", D: "Aja dumeh"}, kunci: "A" }
+        ],
+
+        // ================= SENI BUDAYA [NEW] =================
+        "7-SENBUD": [
+            { id: 796, tanya: 'Karya seni rupa yang memiliki panjang dan lebar saja disebut seni rupa...', opsi: {A: "2 Dimensi", B: "3 Dimensi", C: "Murni", D: "Terapan"}, kunci: "A" },
+            { id: 797, tanya: 'Warna primer terdiri dari...', opsi: {A: "Merah, Kuning, Hijau", B: "Merah, Kuning, Biru", C: "Hitam, Putih, Abu", D: "Oranye, Ungu, Hijau"}, kunci: "B" },
+            { id: 798, tanya: 'Alat musik angklung berasal dari...', opsi: {A: "Jawa Tengah", B: "Jawa Barat", C: "Jawa Timur", D: "Bali"}, kunci: "B" },
+            { id: 799, tanya: 'Menari secara berkelompok disebut tari...', opsi: {A: "Tunggal", B: "Berpasangan", C: "Kelompok", D: "Massal"}, kunci: "C" },
+            { id: 7991, tanya: 'Menggambar bentuk objek alam benda disebut menggambar...', opsi: {A: "Flora", B: "Fauna", C: "Alam Benda", D: "Figuratif"}, kunci: "C" }
+        ],
+        "8-SENBUD": [
+            { id: 896, tanya: 'Poster bertujuan untuk...', opsi: {A: "Hiasan dinding", B: "Menyampaikan informasi/ajakan", C: "Bungkus makanan", D: "Bahan baju"}, kunci: "B" },
+            { id: 897, tanya: 'Musik tradisional Jawa biasanya menggunakan tangga nada...', opsi: {A: "Diatonis", B: "Pentatonis", C: "Kromatis", D: "Mayor"}, kunci: "B" },
+            { id: 898, tanya: 'Tari Piring berasal dari daerah...', opsi: {A: "Sumatera Barat", B: "Aceh", C: "Riau", D: "Jambi"}, kunci: "A" },
+            { id: 899, tanya: 'Alat musik yang dimainkan dengan cara dipukul disebut...', opsi: {A: "Membranophone", B: "Aerophone", C: "Chordophone", D: "Idiophone/Membranophone"}, kunci: "D" },
+            { id: 8991, tanya: 'Gambar ilustrasi dalam bentuk komik terdiri dari...', opsi: {A: "Tulisan saja", B: "Gambar dan Teks", C: "Suara", D: "Video"}, kunci: "B" }
+        ],
+        "9-SENBUD": [
+            { id: 996, tanya: 'Seni lukis adalah cabang dari seni...', opsi: {A: "Rupa", B: "Musik", C: "Tari", D: "Teater"}, kunci: "A" },
+            { id: 997, tanya: 'Patung termasuk karya seni rupa ... dimensi.', opsi: {A: "1", B: "2", C: "3", D: "4"}, kunci: "C" },
+            { id: 998, tanya: 'Bernyanyi tanpa iringan musik disebut...', opsi: {A: "Unisono", B: "Acapella", C: "Koor", D: "Solo"}, kunci: "B" },
+            { id: 999, tanya: 'Tari kreasi baru adalah tari yang...', opsi: {A: "Sesuai pakem", B: "Kuno", C: "Mengalami pembaharuan", D: "Tidak ada aturan"}, kunci: "C" },
+            { id: 9991, tanya: 'Pameran karya seni rupa di sekolah bertujuan untuk...', opsi: {A: "Jual beli", B: "Pamer harta", C: "Apresiasi karya siswa", D: "Membuang karya"}, kunci: "C" }
         ]
     };
     
     // --- LIST MAPEL UNTUK ADMIN (Code Suffix -> Nama Tampilan) ---
+    // Update untuk Admin Panel
     const DATA_MAPEL = {
+        "PABP": "Pend. Agama (PABP)",
+        "INFO": "Informatika",
         "INDO": "Bahasa Indonesia",
+        "PKN": "Pend. Pancasila (PKN)",
+        "MTK": "Matematika",
+        "PJOK": "PJOK (Penjasorkes)",
         "ING": "Bahasa Inggris",
+        "BJAWA": "Bahasa Jawa",
         "IPA": "Ilmu Pengetahuan Alam (IPA)",
         "IPS": "Ilmu Pengetahuan Sosial (IPS)",
-        "PKN": "Pendidikan Kewarganegaraan",
-        "PJOK": "PJOK (Penjasorkes)"
+        "SENBUD": "Seni Budaya"
     };
 
     // --- VARIABEL STATE ---
@@ -556,10 +737,75 @@
         storage.setItem(RULE_ACCEPTED_KEY, 'true');
     }
 
-    // --- FUNGSI ADMIN: RENDER LIST JADWAL & STATUS TRYOUT ---
+    // --- FUNGSI GEOLOCATION UTILS ---
+    
+    // Rumus Haversine untuk hitung jarak dalam Meter
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371e3; // Radius bumi dalam meter
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                  Math.sin(dLon/2) * Math.sin(dLon/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c; // Jarak dalam meter
+    }
+
+    // Fungsi utama cek lokasi
+    function checkLocationAccess() {
+        return new Promise((resolve, reject) => {
+            if (!navigator.geolocation) {
+                alert("Browser Anda tidak mendukung Geolocation.");
+                resolve(false);
+                return;
+            }
+
+            const loader = document.getElementById('loader');
+            const loaderText = document.getElementById('loader-text');
+            loader.style.display = 'flex';
+            loaderText.innerText = "Memeriksa Lokasi GPS...";
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const userLat = position.coords.latitude;
+                    const userLng = position.coords.longitude;
+                    const distance = calculateDistance(userLat, userLng, SCHOOL_LAT, SCHOOL_LNG);
+                    
+                    loader.style.display = 'none';
+                    loaderText.innerText = "Sedang memproses...";
+
+                    console.log(`Posisi User: ${userLat}, ${userLng} | Jarak: ${distance.toFixed(2)}m`);
+
+                    if (distance <= MAX_DISTANCE_METERS) {
+                        resolve(true);
+                    } else {
+                        alert(`🚫 AKSES DITOLAK!\n\nAnda berada di luar lingkungan sekolah.\nJarak Anda: ${distance.toFixed(0)} meter.\nBatas Maksimal: ${MAX_DISTANCE_METERS} meter.\n\nSilakan mendekat ke area sekolah.`);
+                        resolve(false);
+                    }
+                },
+                (error) => {
+                    loader.style.display = 'none';
+                    loaderText.innerText = "Sedang memproses...";
+                    let msg = "Gagal mengambil lokasi.";
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED: msg = "Izin lokasi ditolak. Wajib aktifkan GPS untuk ujian."; break;
+                        case error.POSITION_UNAVAILABLE: msg = "Informasi lokasi tidak tersedia."; break;
+                        case error.TIMEOUT: msg = "Waktu permintaan lokasi habis."; break;
+                    }
+                    alert(`⚠️ ${msg}\nPastikan GPS aktif dan izinkan browser mengakses lokasi.`);
+                    resolve(false);
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            );
+        });
+    }
+
+    // --- FUNGSI ADMIN: RENDER LIST JADWAL & STATUS ---
     window.renderAdminScheduleList = async function() {
         const container = document.getElementById('admin-schedule-list');
         const btnTryout = document.getElementById('btn-tryout-toggle');
+        const btnRadius = document.getElementById('btn-radius-toggle');
+        
         container.innerHTML = "<div style='padding:10px;text-align:center;'>Memuat...</div>";
         
         try {
@@ -572,15 +818,28 @@
             const isTryoutOpen = data.isTryoutOpen === true;
             if(isTryoutOpen) {
                 btnTryout.innerText = "SEDANG AKTIF (MATIKAN)";
-                btnTryout.style.backgroundColor = "#059669"; // Green
+                btnTryout.style.backgroundColor = "#059669"; 
                 btnTryout.style.color = "white";
             } else {
                 btnTryout.innerText = "MATI (AKTIFKAN)";
-                btnTryout.style.backgroundColor = "#d1d5db"; // Gray
+                btnTryout.style.backgroundColor = "#d1d5db"; 
                 btnTryout.style.color = "#374151";
             }
 
-            // 2. RENDER JADWAL MAPEL
+            // 2. UPDATE TOMBOL RADIUS
+            // Defaultnya true (aktif) jika tidak ada settingan
+            const isRadiusActive = data.isRadiusActive !== false; 
+            if(isRadiusActive) {
+                btnRadius.innerText = "ON (AKTIF)";
+                btnRadius.style.backgroundColor = "#059669";
+                btnRadius.style.color = "white";
+            } else {
+                btnRadius.innerText = "OFF (MATI)";
+                btnRadius.style.backgroundColor = "#ef4444";
+                btnRadius.style.color = "white";
+            }
+
+            // 3. RENDER JADWAL MAPEL
             container.innerHTML = "";
             for (const [code, name] of Object.entries(DATA_MAPEL)) {
                 let val = "";
@@ -615,15 +874,67 @@
         const newState = !isCurrentlyActive;
 
         btn.innerText = "Menyimpan...";
-        
         try {
             await setDoc(doc(db, CONFIG_COLLECTION, SCHEDULE_DOC), { isTryoutOpen: newState }, { merge: true });
-            // Refresh UI
             renderAdminScheduleList();
-            alert(newState ? "MODE TRYOUT AKTIF! Semua soal terbuka." : "MODE TRYOUT MATI. Jadwal berlaku kembali.");
+            alert(newState ? "MODE TRYOUT AKTIF! Semua soal terbuka & Radius Bypass." : "MODE TRYOUT MATI. Jadwal & Radius berlaku kembali.");
         } catch(e) {
-            alert("Gagal update status: " + e.message);
-            renderAdminScheduleList(); // Reset UI
+            alert("Gagal update: " + e.message);
+            renderAdminScheduleList();
+        }
+    }
+
+    // --- FUNGSI ADMIN: TOGGLE RADIUS MODE ---
+    window.toggleRadiusMode = async function() {
+        const btn = document.getElementById('btn-radius-toggle');
+        const isCurrentlyActive = btn.innerText.includes("ON");
+        const newState = !isCurrentlyActive; // Jika ON jadi OFF (false), Jika OFF jadi ON (true)
+
+        btn.innerText = "Menyimpan...";
+        try {
+            await setDoc(doc(db, CONFIG_COLLECTION, SCHEDULE_DOC), { isRadiusActive: newState }, { merge: true });
+            renderAdminScheduleList();
+            alert(newState ? "RADIUS CHECK AKTIF. Siswa wajib di sekolah." : "RADIUS CHECK MATI. Siswa bebas akses dari mana saja.");
+        } catch(e) {
+            alert("Gagal update: " + e.message);
+            renderAdminScheduleList();
+        }
+    }
+    
+    // --- FUNGSI ADMIN: SET JADWAL SESUAI PDF ---
+    window.setJadwalSesuaiPDF = async function() {
+        if(!confirm("Yakin ingin mereset SEMUA jadwal mapel sesuai PDF Remedial?")) return;
+        
+        // Jadwal sesuai PDF (Menggunakan ISO String UTC+7 / WIB)
+        // SELASA 9 DESEMBER
+        const S_PABP = "2025-12-09T07:30:00+07:00";
+        const S_INFO = "2025-12-09T08:30:00+07:00";
+        const S_INDO = "2025-12-09T10:00:00+07:00";
+        const S_PKN  = "2025-12-09T11:00:00+07:00";
+        
+        // RABU 10 DESEMBER
+        const R_MTK   = "2025-12-10T07:30:00+07:00";
+        const R_PJOK  = "2025-12-10T08:30:00+07:00";
+        const R_ING   = "2025-12-10T10:00:00+07:00";
+        const R_BJAWA = "2025-12-10T11:00:00+07:00";
+        
+        // KAMIS 11 DESEMBER
+        const K_IPA    = "2025-12-11T07:30:00+07:00";
+        const K_IPS    = "2025-12-11T08:30:00+07:00";
+        const K_SENBUD = "2025-12-11T10:00:00+07:00";
+
+        const updateData = {
+            "PABP": S_PABP, "INFO": S_INFO, "INDO": S_INDO, "PKN": S_PKN,
+            "MTK": R_MTK, "PJOK": R_PJOK, "ING": R_ING, "BJAWA": R_BJAWA,
+            "IPA": K_IPA, "IPS": K_IPS, "SENBUD": K_SENBUD
+        };
+
+        try {
+            await setDoc(doc(db, CONFIG_COLLECTION, SCHEDULE_DOC), updateData, { merge: true });
+            renderAdminScheduleList();
+            alert("✅ Jadwal Berhasil Diatur Sesuai PDF (9-11 Des 2025)!");
+        } catch(e) {
+            alert("Gagal setting jadwal: " + e.message);
         }
     }
 
@@ -642,9 +953,9 @@
         }
     }
 
-    // --- FUNGSI CEK JADWAL (UPDATE: BYPASS JIKA TRYOUT OPEN) ---
-    async function checkExamSchedule(levelVal) {
-        if(!levelVal) return true; // Safety
+    // --- FUNGSI CEK JADWAL & LOKASI ---
+    async function checkExamRequirements(levelVal) {
+        if(!levelVal) return true;
 
         const mapelCode = levelVal.split('-')[1]; 
         
@@ -653,19 +964,38 @@
             if(snap.exists()) {
                 const data = snap.data();
 
-                // 1. CEK GLOBAL TRYOUT MODE (BYPASS)
+                // 1. CEK GLOBAL TRYOUT MODE (BYPASS SEMUA)
                 if(data.isTryoutOpen === true) {
-                    return true; // Buka langsung
+                    return true; 
                 }
 
-                // 2. CEK JADWAL SPESIFIK MAPEL
+                // 2. CEK RADIUS / LOKASI (BARU)
+                // Default aktif jika tidak diset false
+                const isRadiusCheckActive = data.isRadiusActive !== false;
+                if (isRadiusCheckActive) {
+                    const allowed = await checkLocationAccess();
+                    if (!allowed) {
+                        // Reset UI Dropdown jika lokasi ditolak
+                        document.getElementById('examLevel').value = "";
+                        document.getElementById('questions-container').innerHTML = 
+                            '<div class="empty-state" style="color:#ef4444;">🚫 Akses Ditolak: Ujian harus Dilingkungan Sekolah.</div>';
+                        document.getElementById('btn-done').style.display = 'none';
+                        return false;
+                    }
+                }
+
+                // 3. CEK JADWAL WAKTU
                 const startTimeStr = data[mapelCode];
                 if(startTimeStr) {
                     const start = new Date(startTimeStr);
                     const now = new Date();
                     
                     if(now < start) {
-                        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+                        const options = { 
+                            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', 
+                            hour: '2-digit', minute: '2-digit', 
+                            timeZone: 'Asia/Jakarta', timeZoneName: 'short' 
+                        };
                         const dateString = start.toLocaleString('id-ID', options);
                         const mapelName = DATA_MAPEL[mapelCode] || mapelCode;
 
@@ -674,17 +1004,17 @@
                                 <h2 style="color:#c2410c; margin-top:0;">⏳ Ujian Belum Dimulai</h2>
                                 <p style="color:#9a3412;">Mata Pelajaran: <b>${mapelName}</b></p>
                                 <p style="color:#9a3412;">Silakan kembali pada:</p>
-                                <h3 style="color:#ea580c; margin:10px 0; font-size:1.2rem;">${dateString} WIB</h3>
+                                <h3 style="color:#ea580c; margin:10px 0; font-size:1.2rem;">${dateString}</h3>
                                 <p style="font-size:0.8rem; color:#7c2d12;">Sistem akan membuka soal secara otomatis.</p>
                             </div>
                         `;
                         document.getElementById('btn-done').style.display = 'none';
-                        return false; // Jadwal belum mulai
+                        return false; 
                     }
                 }
             }
-        } catch(e) { console.error("Error checking schedule", e); }
-        return true; // Aman
+        } catch(e) { console.error("Error checking requirements", e); }
+        return true; 
     }
 
     // --- FUNGSI GANTI PAKET SOAL ---
@@ -697,12 +1027,12 @@
             return;
         }
 
-        // 1. CEK JADWAL SPESIFIK MAPEL DULU SEBELUM PROSES
-        document.getElementById('questions-container').innerHTML = '<div class="empty-state">⏳ Memeriksa akses soal...</div>';
+        // 1. CEK SYARAT (LOKASI & WAKTU)
+        document.getElementById('questions-container').innerHTML = '<div class="empty-state">⏳ Memeriksa lokasi & jadwal...</div>';
         
-        const isOpen = await checkExamSchedule(levelVal);
+        const isAllowed = await checkExamRequirements(levelVal);
         
-        if(!isOpen) {
+        if(!isAllowed) {
              currentLevel = ""; 
              return;
         }
@@ -751,8 +1081,11 @@
 
         const savedLevel = storage.getItem(LEVEL_KEY);
         if(savedLevel && DATA_BANK_SOAL[savedLevel]) {
-            document.getElementById('examLevel').value = savedLevel;
-            changeExamLevel(savedLevel); 
+            // Kita tidak auto-load level saat refresh jika radius check aktif,
+            // karena kita perlu validasi ulang lokasi.
+            // Tapi untuk UX, kita set value dropdown, tapi user harus klik ulang atau kita trigger changeExamLevel
+            // Untuk keamanan, lebih baik user memilih ulang agar cek lokasi jalan lagi.
+            document.getElementById('examLevel').value = ""; 
         }
         
         attachSaveListeners();
@@ -976,8 +1309,11 @@
         const r2 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[Math.floor(Math.random()*26)];
         const kode = `#SEC-${r1}${100-finalScore}${r2}`;
 
+        // FORCE WIB FOR SAVED TIME
+        const wibTime = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta', dateStyle: 'medium', timeStyle: 'medium' }) + " WIB";
+
         const dataSiswa = {
-            waktu: new Date().toLocaleString(),
+            waktu: wibTime,
             nama: finalNama, 
             kelas: finalKelas, 
             absen: finalAbsen,
@@ -1043,11 +1379,17 @@
             snap.forEach(d => data.push(d.data()));
             if(data.length === 0) { tbody.innerHTML = "<tr><td colspan='3' style='text-align:center;'>Kosong</td></tr>"; return; }
             
+            // LOGIC SORTING UNTUK TABEL
             data.sort((a,b) => {
                 const levelA = a.level_soal || "0";
                 const levelB = b.level_soal || "0";
+                // 1. Urut Level/Mapel
                 if(levelA !== levelB) return levelA.localeCompare(levelB);
-                return (a.kelas.localeCompare(b.kelas)) || (parseInt(a.absen) - parseInt(b.absen));
+                // 2. Urut Kelas (Numeric aware: 7A, 7B, 10A)
+                const kelasCompare = a.kelas.localeCompare(b.kelas, undefined, { numeric: true, sensitivity: 'base' });
+                if(kelasCompare !== 0) return kelasCompare;
+                // 3. Urut Absen
+                return parseInt(a.absen) - parseInt(b.absen);
             });
 
             tbody.innerHTML = "";
@@ -1061,12 +1403,17 @@
                 else if(mapelCode.includes('IPS')) colorBadge = '#eab308'; 
                 else if(mapelCode.includes('PKN')) colorBadge = '#ef4444'; 
                 else if(mapelCode.includes('INDO')) colorBadge = '#06b6d4'; 
+                else if(mapelCode.includes('MTK')) colorBadge = '#8b5cf6'; 
+                else if(mapelCode.includes('INFO')) colorBadge = '#ec4899'; 
+                else if(mapelCode.includes('PABP')) colorBadge = '#14b8a6'; 
+                else if(mapelCode.includes('BJAWA')) colorBadge = '#a855f7'; 
+                else if(mapelCode.includes('SENBUD')) colorBadge = '#f43f5e'; 
 
                 tbody.innerHTML += `<tr>
                     <td style="padding:8px; border:1px solid #ddd;">
                         <b>${d.nama}</b><br>
                         <span style="color:white; background:${colorBadge}; font-weight:bold; font-size:0.7rem; padding:2px 6px; border-radius:4px;">${mapelCode}</span> 
-                        <small style="color:gray">${d.waktu.split(',')[1]||''}</small>
+                        <small style="color:gray">${d.waktu || ''}</small>
                     </td>
                     <td style="padding:8px; border:1px solid #ddd;">${d.kelas}</td>
                     <td style="padding:8px; border:1px solid #ddd; text-align:center;"><b>${d.nilai}</b></td>
@@ -1087,6 +1434,7 @@
         }
     }
 
+    // --- REVISI: LOGIC DOWNLOAD LEBIH RAPI & FORCE WIB FILENAME ---
     window.downloadCSV = async function() {
         if(!auth.currentUser) return;
         const snap = await getDocs(collection(db, COLLECTION_NAME));
@@ -1094,14 +1442,31 @@
         snap.forEach(d => data.push(d.data()));
         if(data.length === 0) return alert("Data kosong");
         
-        data.sort((a,b) => (a.kelas.localeCompare(b.kelas)) || (parseInt(a.absen) - parseInt(b.absen)));
+        // SORTING (Mapel -> Kelas -> Absen)
+        data.sort((a,b) => {
+            const levelA = a.level_soal || "0";
+            const levelB = b.level_soal || "0";
+            
+            // 1. Prioritas Utama: MATA PELAJARAN (Level)
+            if(levelA !== levelB) return levelA.localeCompare(levelB);
+            
+            // 2. Prioritas Kedua: KELAS (7A, 7B, 7C...)
+            const kelasCompare = a.kelas.localeCompare(b.kelas, undefined, { numeric: true, sensitivity: 'base' });
+            if(kelasCompare !== 0) return kelasCompare;
+            
+            // 3. Prioritas Ketiga: NO ABSEN
+            return parseInt(a.absen) - parseInt(b.absen);
+        });
         
         let csv = "Mapel,Waktu,Nama,Kelas,Absen,Nilai,Kode\n";
         data.forEach(r => csv += `"${r.level_soal||''}","${r.waktu}","${r.nama}","${r.kelas}","${r.absen}",${r.nilai},"${r.kode}"\n`);
         
         const a = document.createElement("a");
         a.href = URL.createObjectURL(new Blob(["\uFEFF"+csv], {type: 'text/csv;charset=utf-8;'}));
-        a.download = `Nilai_Lengkap_${new Date().toISOString().split('T')[0]}.csv`;
+        
+        // Buat nama file berdasarkan WIB
+        const nowWIB = new Date().toLocaleString('en-GB', { timeZone: 'Asia/Jakarta' }).split(',')[0].split('/').reverse().join('-');
+        a.download = `Nilai_Lengkap_${nowWIB}.csv`;
         a.click();
     }
 
