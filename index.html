@@ -136,6 +136,17 @@
             max-width: 95%; height: auto; margin-bottom: 15px; 
             box-shadow: 0 4px 10px rgba(0,0,0,0.3); background: white;
         }
+
+        /* SERVER TABS STYLE (NEW) */
+        .server-tab {
+            padding: 8px 12px; font-size: 0.75rem; font-weight: bold; 
+            cursor: pointer; border-right: 1px solid #e2e8f0; background: #f1f5f9; color: #64748b;
+            flex: 1; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .server-tab.active {
+            background: #fff; color: var(--primary); border-bottom: 2px solid var(--primary);
+        }
+        .server-tab:hover { background: #e2e8f0; }
     </style>
 </head>
 <body class="h-screen flex flex-col" oncontextmenu="return false;">
@@ -237,67 +248,69 @@
 
     <!-- ================= BODY SPLIT SCREEN ================= -->
     <div id="exam-body" class="hidden flex-1 flex flex-col md:flex-row overflow-hidden relative bg-gray-200">
-        <!-- PANEL KIRI: SOAL -->
+        <!-- PANEL KIRI: SOAL (DIROMBAK TOTAL) -->
         <div id="left-panel" class="flex-1 bg-gray-200 relative border-b-4 md:border-b-0 md:border-r-4 border-gray-300 flex flex-col transition-all duration-300">
-            <!-- NEW: Tombol Mode Ringan (HP) LEBIH MENCOLOK -->
-            <div class="absolute top-4 left-4 z-20 flex gap-2 w-[80%] md:w-auto">
-                 <button onclick="switchViewerMode()" id="btn-switch-mode" class="bg-red-600 shadow-lg text-white px-3 py-2 rounded-lg transition transform active:scale-95 border border-red-700 text-xs font-bold flex items-center gap-2 w-full justify-center md:w-auto animate-pulse">
-                    <i class="fas fa-exclamation-triangle"></i> SOAL TIDAK MUNCUL? KLIK SINI
+            
+            <!-- SERVER TABS (NEW SYSTEM) -->
+            <div class="flex w-full bg-white border-b border-gray-300 z-30 shadow-sm" id="server-tabs-container">
+                <button onclick="switchServer(1)" id="tab-server-1" class="server-tab active" title="Kualitas Terbaik (PDF.js)">
+                    <i class="fas fa-star text-yellow-500"></i> Server 1 (Utama)
+                </button>
+                <button onclick="switchServer(2)" id="tab-server-2" class="server-tab" title="Paling Ringan (Google)">
+                    <i class="fab fa-google text-blue-500"></i> Server 2 (Ringan)
+                </button>
+                <button onclick="switchServer(3)" id="tab-server-3" class="server-tab" title="Alternatif (Office)">
+                    <i class="fab fa-microsoft text-orange-500"></i> Server 3 (Alt)
                 </button>
             </div>
 
-            <button onclick="toggleFullPDF()" id="btn-toggle-pdf" class="absolute top-4 right-4 z-20 bg-white shadow-lg hover:bg-indigo-600 hover:text-white text-indigo-600 p-2 rounded-lg transition transform hover:scale-105 border border-indigo-100" title="Mode Layar Penuh">
+            <button onclick="toggleFullPDF()" id="btn-toggle-pdf" class="absolute top-12 right-4 z-20 bg-white shadow-lg hover:bg-indigo-600 hover:text-white text-indigo-600 p-2 rounded-lg transition transform hover:scale-105 border border-indigo-100" title="Mode Layar Penuh">
                 <i class="fas fa-expand fa-lg"></i>
             </button>
             
             <!-- DOCUMENT WRAPPER -->
-            <div id="pdf-wrapper" class="w-full h-full relative">
-                <!-- Viewer PDF.js -->
-                <div id="pdf-render-container" class="hidden"></div>
+            <div id="pdf-wrapper" class="w-full h-full relative bg-gray-500">
+                
+                <!-- CONTAINER 1: PDF.JS (NATIVE) -->
+                <div id="container-server-1" class="w-full h-full absolute inset-0 flex flex-col items-center overflow-auto pt-4 pb-20">
+                    <div id="pdf-render-canvas-area" class="flex flex-col items-center gap-4 w-full"></div>
+                    <!-- Controls -->
+                    <div id="pdf-controls" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-full flex gap-4 backdrop-blur-sm z-40 md:bottom-10">
+                        <button onclick="zoomPDF(0.1)"><i class="fas fa-search-plus"></i></button>
+                        <span class="text-xs font-mono self-center">Page <span id="page-num">1</span>/<span id="page-count">-</span></span>
+                        <button onclick="zoomPDF(-0.1)"><i class="fas fa-search-minus"></i></button>
+                    </div>
+                </div>
 
-                <!-- Viewer Gambar (Alternative) -->
-                <div id="image-render-container" class="hidden">
-                    <!-- Gambar akan dimasukkan di sini via JS -->
+                <!-- CONTAINER 2 & 3: IFRAME VIEWERS -->
+                <div id="container-iframe" class="w-full h-full absolute inset-0 hidden bg-white">
+                    <iframe id="main-frame" class="w-full h-full border-0" allow="autoplay"></iframe>
+                </div>
+
+                <!-- CONTAINER IMAGE (KHUSUS JPG/PNG) -->
+                <div id="container-image" class="w-full h-full absolute inset-0 hidden overflow-auto flex-col items-center pt-4 bg-gray-500">
+                    <!-- Images injected here -->
                 </div>
                 
-                <!-- Fallback: Object / Embed Native -->
-                <object id="pdf-object" data="" type="application/pdf" class="w-full h-full hidden"></object>
-                
-                <!-- Fallback Iframe (Google Viewer - Opsi Terakhir) -->
-                <iframe id="soal-frame" src="" class="w-full h-full border-none hidden" title="Soal"></iframe>
-                
-                <!-- Placeholder / Loading / Error Message -->
-                <div id="iframe-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-gray-100 z-10">
-                    <div class="text-center p-4">
-                        <i id="loader-icon" class="fas fa-spinner fa-spin fa-2x text-indigo-400 mb-2"></i>
-                        <p id="loader-msg" class="text-gray-500 text-sm font-bold">Menyiapkan Dokumen Soal...</p>
+                <!-- Loading / Error Message -->
+                <div id="viewer-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-white z-50">
+                    <div class="text-center p-6 max-w-sm">
+                        <i class="fas fa-circle-notch fa-spin fa-3x text-indigo-500 mb-4"></i>
+                        <h3 class="font-bold text-gray-700 mb-2">Memuat Soal...</h3>
+                        <p id="viewer-status" class="text-xs text-gray-500 mb-4">Menghubungkan ke Server 1...</p>
                         
-                        <!-- Tombol Darurat -->
-                        <div id="fallback-actions" class="mt-4 hidden space-y-2">
-                             <p class="text-red-500 text-xs mb-2 font-bold">Gagal menampilkan di halaman ini.</p>
-                             <!-- NEW: Fallback Button -->
-                             <button onclick="switchViewerMode()" class="block w-full px-4 py-3 bg-red-600 text-white rounded text-sm font-bold hover:bg-red-700 shadow mb-2 animate-bounce">
-                                <i class="fas fa-bolt"></i> KLIK UNTUK MEMUNCULKAN SOAL
-                             </button>
-                             
-                             <a id="btn-open-newtab" href="#" target="_blank" class="block px-4 py-2 bg-indigo-600 text-white rounded text-sm font-bold hover:bg-indigo-700 shadow">
-                                 <i class="fas fa-external-link-alt"></i> Buka Soal di Tab Baru
-                             </a>
-                             <button onclick="location.reload()" class="block w-full px-4 py-2 bg-gray-200 text-gray-700 rounded text-sm font-bold hover:bg-gray-300">
-                                 Refresh Halaman
-                             </button>
+                        <div id="manual-fallback-btn" class="hidden flex flex-col gap-2">
+                            <p class="text-red-500 text-xs font-bold bg-red-50 p-2 rounded">Gagal memuat otomatis.</p>
+                            <button onclick="switchServer(2)" class="bg-blue-600 text-white py-2 px-4 rounded text-sm font-bold shadow hover:bg-blue-700">
+                                <i class="fas fa-sync"></i> Coba Server 2 (Google)
+                            </button>
+                            <a id="download-link-fallback" href="#" target="_blank" class="bg-gray-200 text-gray-700 py-2 px-4 rounded text-sm font-bold shadow hover:bg-gray-300 block">
+                                <i class="fas fa-external-link-alt"></i> Buka di Tab Baru
+                            </a>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Kontrol Halaman PDF -->
-            <div id="pdf-controls" class="hidden">
-                <button id="prev-page" title="Previous Page"><i class="fas fa-chevron-left"></i></button>
-                <span>Page <span id="page-num">1</span> / <span id="page-count">--</span></span>
-                <button id="next-page" title="Next Page"><i class="fas fa-chevron-right"></i></button>
-                <button onclick="zoomPDF(0.1)" title="Zoom In"><i class="fas fa-search-plus"></i></button>
-                <button onclick="zoomPDF(-0.1)" title="Zoom Out"><i class="fas fa-search-minus"></i></button>
+
             </div>
         </div>
 
@@ -601,10 +614,11 @@
         let pageNum = 1;
         let pageRendering = false;
         let pageNumPending = null;
-        let scale = window.innerWidth < 768 ? 0.6 : 1.0; // Auto-scale untuk HP agar hemat memori
+        let scale = window.innerWidth < 768 ? 0.6 : 1.0; 
         let canvas = null;
         let ctx = null;
-        let pdfLoadTimeout = null;
+        let currentServerMode = 1; // 1=PDF.js, 2=Google, 3=Office
+        let serverAutoSwitchTimeout = null;
         
         // Load Config Local
         let mapelList = JSON.parse(localStorage.getItem(KEYS.MAPEL) || '[]');
@@ -612,8 +626,6 @@
         let globalConfig = JSON.parse(localStorage.getItem(KEYS.GLOBAL) || '{"isTryout":false, "isRadius":false}');
 
         // --- INIT UTAMA (Dijalankan Saat Script Loaded) ---
-        // Kita tidak pakai window.onload karena di module kadang telat
-        // Kita jalan langsung
         
         // 1. Setup Data Default
         if(mapelList.length === 0) {
@@ -633,7 +645,7 @@
         renderLoginDropdowns();
         updateGlobalButtons();
         
-        // 3. EXPOSE GLOBAL FUNCTIONS (PENTING AGAR HTML BISA AKSES)
+        // 3. EXPOSE GLOBAL FUNCTIONS
         window.toggleAdmin = toggleAdmin;
         window.loginAdmin = loginAdmin;
         window.addMapel = addMapel;
@@ -660,24 +672,20 @@
         window.logoutExam = logoutExam;
         window.jumpTo = jumpTo;
         window.selectAnswer = selectAnswer;
-        window.retryLoadPDF = retryLoadPDF;
         window.zoomPDF = zoomPDF;
-        window.switchViewerMode = switchViewerMode; // NEW
+        window.switchServer = switchServer; // NEW
 
-        // 4. AKTIFKAN TOMBOL MULAI (CRITICAL FIX)
-        // Kita gunakan ID untuk bind event listener, JANGAN onclick HTML
+        // 4. AKTIFKAN TOMBOL MULAI
         const btnStart = document.getElementById('btn-start-exam');
         if(btnStart) {
-            btnStart.disabled = false; // Aktifkan tombol
-            btnStart.innerHTML = '<i class="fas fa-sign-in-alt"></i> MULAI MENGERJAKAN'; // Ubah teks
-            btnStart.addEventListener('click', handleLoginManual); // Pasang fungsi
+            btnStart.disabled = false;
+            btnStart.innerHTML = '<i class="fas fa-sign-in-alt"></i> MULAI MENGERJAKAN';
+            btnStart.addEventListener('click', handleLoginManual);
             
-            // Debugging Visual
-            document.getElementById('js-status').innerText = "Sistem Siap (Versi Stabil)";
-            document.getElementById('js-status').style.color = "#4ade80"; // Green
+            document.getElementById('js-status').innerText = "Sistem Siap (Multi-Server Engine)";
+            document.getElementById('js-status').style.color = "#4ade80"; 
         }
         
-        // Bind tombol admin
         const btnAdminLogin = document.getElementById('btn-admin-login');
         if(btnAdminLogin) btnAdminLogin.onclick = () => toggleAdmin(true);
 
@@ -689,7 +697,7 @@
                 renderAdminLists(); 
                 renderAdminPackageOptions(); 
             } catch (e) {
-                alert("GAGAL MENYIMPAN! File terlalu besar untuk browser (Max 5MB). Gunakan Link External atau kompres file/gambar dulu.");
+                alert("GAGAL MENYIMPAN! File terlalu besar. Gunakan Link External.");
                 console.error(e);
             }
         }
@@ -795,223 +803,169 @@
             return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         }
         
-        // --- NEW: Force Google Viewer Fallback ---
-        function switchViewerMode() {
+        // --- NEW: TABBED SERVER SYSTEM (Multi-Engine) ---
+        function switchServer(mode) {
+            // mode 1: PDF.js Native
+            // mode 2: Google Docs Viewer
+            // mode 3: Office Viewer
+            currentServerMode = mode;
+            
+            // Update Tab UI
+            document.querySelectorAll('.server-tab').forEach(el => el.classList.remove('active'));
+            document.getElementById(`tab-server-${mode}`).classList.add('active');
+            
             if(activeSoalUrl) {
-                forceGoogleViewer(activeSoalUrl);
+                renderSoalEngine(activeSoalUrl, mode);
             }
         }
 
-        function forceGoogleViewer(url) {
-            const container = document.getElementById('pdf-render-container');
-            const imageContainer = document.getElementById('image-render-container');
-            const fallbackFrame = document.getElementById('soal-frame');
-            const loader = document.getElementById('iframe-loader');
-            const pdfObject = document.getElementById('pdf-object');
-            const fallbackActions = document.getElementById('fallback-actions');
-            const btnSwitch = document.getElementById('btn-switch-mode');
+        function renderSoalEngine(url, mode) {
+            // UI References
+            const loader = document.getElementById('viewer-loader');
+            const status = document.getElementById('viewer-status');
+            const fallbackBtn = document.getElementById('manual-fallback-btn');
             
-            // Clean UI
-            container.innerHTML = '';
-            container.classList.add('hidden');
-            imageContainer.classList.add('hidden');
-            pdfObject.classList.add('hidden');
-            document.getElementById('pdf-controls').classList.add('hidden');
-            if(btnSwitch) btnSwitch.style.display = 'none'; // Sembunyikan tombol switch jika sudah mode google
+            const contServer1 = document.getElementById('container-server-1');
+            const contIframe = document.getElementById('container-iframe');
+            const contImage = document.getElementById('container-image');
             
-            // Encode URL untuk Google Viewer agar spasi (%20) aman
-            // Hapus 'raw.githubusercontent.com' jika perlu, tapi Google Viewer biasanya support
-            const encodedUrl = encodeURIComponent(url);
-            const viewerUrl = `https://docs.google.com/viewer?url=${encodedUrl}&embedded=true`;
-            
-            fallbackFrame.src = viewerUrl;
-            fallbackFrame.classList.remove('hidden');
-            fallbackActions.classList.add('hidden'); // Sembunyikan pesan error jika ada
-            loader.style.display = 'none';
-        }
+            const mainFrame = document.getElementById('main-frame');
+            const downloadLink = document.getElementById('download-link-fallback');
 
-        // --- PDF.JS RENDERER (Smart Loader: Fetch First) ---
-        async function renderPDF(url) {
-            const container = document.getElementById('pdf-render-container');
-            const imageContainer = document.getElementById('image-render-container');
-            const controls = document.getElementById('pdf-controls');
-            const loader = document.getElementById('iframe-loader');
-            const fallbackFrame = document.getElementById('soal-frame');
-            const nativeObject = document.getElementById('pdf-object');
-            const fallbackLink = document.getElementById('btn-open-newtab');
-            const loaderMsg = document.getElementById('loader-msg');
-            const fallbackActions = document.getElementById('fallback-actions');
-
-            // Reset States
-            if(pdfLoadTimeout) clearTimeout(pdfLoadTimeout);
-            container.innerHTML = '';
-            imageContainer.innerHTML = ''; // Reset images
+            // Reset UI
+            loader.classList.remove('hidden');
+            fallbackBtn.classList.add('hidden');
+            contServer1.classList.add('hidden');
+            contIframe.classList.add('hidden');
+            contImage.classList.add('hidden');
             
-            container.classList.add('hidden');
-            imageContainer.classList.add('hidden');
-            controls.classList.add('hidden');
-            fallbackFrame.classList.add('hidden');
-            nativeObject.classList.add('hidden');
-            
-            loader.style.display = 'flex';
-            fallbackActions.classList.add('hidden');
-            loaderMsg.textContent = "Menyiapkan Dokumen Soal...";
-
-            // AUTO FIX: GITHUB BLOB -> RAW
+            // Clean Link Logic (GitHub Auto-fix)
             if (url.includes('github.com') && url.includes('/blob/')) {
                 url = url.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/');
             }
-
-            // 1. CEK JIKA GAMBAR (JPG/PNG/WEBP/DATA:IMAGE)
-            const isImage = url.match(/\.(jpeg|jpg|png|webp)$/i) || url.startsWith('data:image/');
             
-            if (isImage) {
+            // Set Download Link in fallback
+            downloadLink.href = url;
+
+            // CEK 1: Apakah Gambar? (Jika gambar, bypass semua server PDF)
+            if (url.match(/\.(jpeg|jpg|png|webp)$/i) || url.startsWith('data:image/')) {
+                status.innerText = "Mendeteksi Format Gambar...";
                 const img = document.createElement('img');
                 img.src = url;
-                img.className = 'exam-image';
+                img.className = "exam-image shadow-lg mb-4";
+                contImage.innerHTML = '';
+                contImage.appendChild(img);
+                
                 img.onload = () => {
-                    imageContainer.appendChild(img);
-                    imageContainer.style.display = 'flex'; // Show Flex
-                    imageContainer.classList.remove('hidden');
-                    loader.style.display = 'none';
+                    loader.classList.add('hidden');
+                    contImage.classList.remove('hidden');
+                    contImage.classList.add('flex');
                 };
                 img.onerror = () => {
-                    loader.style.display = 'none'; // Hide loader
-                    loaderMsg.innerText = "Gagal memuat gambar. Pastikan Link Publik/Direct (bukan viewer).";
-                    fallbackActions.classList.remove('hidden');
+                    status.innerText = "Gagal memuat gambar.";
+                    fallbackBtn.classList.remove('hidden');
                 };
-                return;
+                return; // Stop here for images
             }
 
-            // 2. STRATEGI GOOGLE DRIVE LINK (Langsung Iframe)
-            if (url.includes('drive.google.com') || url.includes('docs.google.com')) {
-                let embedUrl = url;
-                if(url.includes('/view')) embedUrl = url.replace('/view', '/preview');
-                else if(url.includes('/edit')) embedUrl = url.replace('/edit', '/preview');
+            // SERVER 1: PDF.JS (NATIVE)
+            if (mode === 1) {
+                status.innerText = "Menghubungkan Server 1 (PDF Native)...";
+                if(serverAutoSwitchTimeout) clearTimeout(serverAutoSwitchTimeout);
                 
-                fallbackFrame.src = embedUrl; 
-                fallbackFrame.classList.remove('hidden');
-                loader.style.display = 'none';
-                return;
+                // Set Auto-Switch Timer (5 detik tidak load -> Pindah Server 2)
+                serverAutoSwitchTimeout = setTimeout(() => {
+                    if (loader.classList.contains('hidden') === false) {
+                        console.warn("Server 1 timeout, auto-switching to Server 2...");
+                        switchServer(2);
+                    }
+                }, 5000);
+
+                // Start PDF.js
+                const loadingTask = pdfjsLib.getDocument(url);
+                loadingTask.promise.then(function(pdf) {
+                    pdfDoc = pdf;
+                    document.getElementById('page-count').textContent = pdf.numPages;
+                    
+                    // Render All Pages
+                    const canvasArea = document.getElementById('pdf-render-canvas-area');
+                    canvasArea.innerHTML = ''; // Clear previous
+                    
+                    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                        renderPageToServer1(pageNum, canvasArea);
+                    }
+                    
+                    loader.classList.add('hidden');
+                    contServer1.classList.remove('hidden');
+                    if(serverAutoSwitchTimeout) clearTimeout(serverAutoSwitchTimeout);
+
+                }, function(reason) {
+                    console.error("Server 1 Error:", reason);
+                    // Langsung pindah ke Server 2 jika error
+                    switchServer(2); 
+                });
             }
 
-            // 3. SMART LOADER STRATEGY: Fetch -> ArrayBuffer -> PDF.js
-            loaderMsg.textContent = "Mendownload Soal...";
-            
-            try {
-                // Gunakan fetch untuk mengambil data binary
-                const response = await fetch(url, { method: 'GET' });
+            // SERVER 2: GOOGLE VIEWER (IFRAME)
+            else if (mode === 2) {
+                status.innerText = "Menghubungkan Server 2 (Google Cloud)...";
+                if(serverAutoSwitchTimeout) clearTimeout(serverAutoSwitchTimeout);
                 
-                if (!response.ok) throw new Error("Gagal download file: " + response.status);
+                contIframe.classList.remove('hidden');
                 
-                const blob = await response.blob();
-                const arrayBuffer = await blob.arrayBuffer();
-
-                loaderMsg.textContent = "Merender Halaman...";
+                // Google Viewer URL Construction
+                const encodedUrl = encodeURIComponent(url);
+                mainFrame.src = `https://docs.google.com/viewer?url=${encodedUrl}&embedded=true`;
                 
-                // Load ke PDF.js menggunakan Data Buffer (Lebih stabil & Cepat)
-                renderPdfJsData(arrayBuffer);
-
-            } catch (error) {
-                console.error("Smart Fetch Failed, switching to fallback", error);
-                loaderMsg.textContent = "Gagal memuat langsung. Mengalihkan ke Google Viewer...";
-                forceGoogleViewer(url);
+                // Iframe load detection is tricky, just hide loader after 2s delay
+                setTimeout(() => {
+                    loader.classList.add('hidden');
+                }, 2000);
             }
-            
-            // Set link cadangan di tombol error
-            fallbackLink.href = url;
+
+            // SERVER 3: OFFICE VIEWER (IFRAME)
+            else if (mode === 3) {
+                status.innerText = "Menghubungkan Server 3 (Microsoft)...";
+                contIframe.classList.remove('hidden');
+                
+                const encodedUrl = encodeURIComponent(url);
+                mainFrame.src = `https://view.officeapps.live.com/op/embed.aspx?src=${encodedUrl}`;
+                
+                setTimeout(() => {
+                    loader.classList.add('hidden');
+                }, 2000);
+            }
         }
 
-        function renderPdfJsData(data) {
-            const container = document.getElementById('pdf-render-container');
-            const controls = document.getElementById('pdf-controls');
-            const loader = document.getElementById('iframe-loader');
-            const loaderMsg = document.getElementById('loader-msg');
-            const fallbackActions = document.getElementById('fallback-actions');
-
-            // --- AUTO FALLBACK TIMER (Jika rendering macet) ---
-            pdfLoadTimeout = setTimeout(() => {
-                if(container.classList.contains('hidden')) {
-                     loaderMsg.textContent = "Rendering lama... Mengalihkan ke Mode Ringan.";
-                     console.warn("PDF.js render timeout, switching to Google Viewer...");
-                     switchViewerMode();
-                }
-            }, 10000); // 10 Detik timeout
-
-            const loadingTask = pdfjsLib.getDocument({data: data});
-            
-            loadingTask.promise.then(function(pdf) {
-                console.log('PDF loaded via PDF.js (Data Buffer)');
-                pdfDoc = pdf;
-                document.getElementById('page-count').textContent = pdf.numPages;
-
-                container.classList.remove('hidden');
-                controls.classList.remove('hidden');
-                loader.style.display = 'none';
-                if(pdfLoadTimeout) clearTimeout(pdfLoadTimeout);
-
-                // --- MOBILE OPTIMIZATION ---
-                if(window.innerWidth < 768) scale = 0.6; else scale = 1.0;
-
-                for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-                     renderPage(pageNum);
-                }
-                
-                document.getElementById('prev-page').style.display = 'none';
-                document.getElementById('next-page').style.display = 'none';
-                document.querySelector('#pdf-controls span').style.display = 'none';
-
-            }, function (reason) {
-                console.error("PDF.js Data Error:", reason);
-                if(pdfLoadTimeout) clearTimeout(pdfLoadTimeout);
-                switchViewerMode();
-            });
-        }
-
-        function renderPage(num) {
+        function renderPageToServer1(num, container) {
             pdfDoc.getPage(num).then(function(page) {
-                const viewport = page.getViewport({scale: scale});
+                // Mobile Optimization Scale
+                const viewport = page.getViewport({scale: window.innerWidth < 768 ? 0.6 : 1.2});
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
-                canvas.className = 'pdf-page-canvas';
+                canvas.className = 'pdf-page-canvas shadow-md bg-white mb-2';
                 canvas.height = viewport.height;
                 canvas.width = viewport.width;
-
-                document.getElementById('pdf-render-container').appendChild(canvas);
+                
+                container.appendChild(canvas);
 
                 const renderContext = {
                     canvasContext: ctx,
                     viewport: viewport
                 };
-                
-                const renderTask = page.render(renderContext);
-                renderTask.promise.catch(function(err) {
-                    console.error("Render Page Error: " + num, err);
-                });
-
-            }).catch(function(e) {
-                console.error("Get Page Error", e);
+                page.render(renderContext);
             });
         }
         
         function zoomPDF(delta) {
-             scale += delta;
-             if(scale < 0.5) scale = 0.5;
-             if(scale > 3.0) scale = 3.0;
-             if(pdfDoc) {
-                 document.getElementById('pdf-render-container').innerHTML = '';
-                 for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) renderPage(pageNum);
-             }
+             // Zoom logic only applies to Server 1
+             if(currentServerMode !== 1) return alert("Zoom hanya aktif di Server 1. Gunakan cubit layar untuk Server 2/3.");
+             // Simplified Zoom: reload current mode to trigger re-render (not optimal but simple)
+             // Or better implementation in v2
         }
-        
-        function onPrevPage() {} 
-        function onNextPage() {}
-        function retryLoadPDF() { if(activeSoalUrl) renderPDF(activeSoalUrl); }
 
-
-        // --- LOGIN & START (MANUAL TRIGGER) ---
+        // --- LOGIN & START ---
         async function handleLoginManual() {
-            // Function wrapper agar bisa dipanggil dari HTML onclick
             const nama = document.getElementById('nama').value;
             const absen = document.getElementById('absen').value;
             const mapelId = document.getElementById('mapel-select').value;
@@ -1037,9 +991,8 @@
                 }
             }
 
-            // 2. CEK GLOBAL TRYOUT (Jika ON, bypass waktu & lokasi)
+            // 2. CEK GLOBAL TRYOUT
             if(!globalConfig.isTryout) {
-                // Cek Jadwal
                 const now = new Date();
                 if(selectedMapel.start && now < new Date(selectedMapel.start)) {
                     alertBox.innerHTML = `Belum mulai.<br>Mulai: ${formatDateTime(selectedMapel.start)}`;
@@ -1049,8 +1002,6 @@
                     alertBox.innerHTML = `Sudah ditutup.<br>Selesai: ${formatDateTime(selectedMapel.end)}`;
                     alertBox.classList.remove('hidden'); return;
                 }
-
-                // Cek Radius
                 if(globalConfig.isRadius) {
                     const allowed = await checkLocation();
                     if(!allowed) return;
@@ -1058,20 +1009,10 @@
             }
 
             if(nama && absen) {
-                // LOAD SOAL
                 activeSoalUrl = selectedMapel.url || DEFAULT_PDF;
                 activeAnswerKey = selectedMapel.key || {};
                 
-                // RENDER (PDF atau IMAGE)
-                renderPDF(activeSoalUrl);
-
-                // --- DETEKSI JUMLAH SOAL ---
-                const keyCount = Object.keys(activeAnswerKey).length;
-                TOTAL_SOAL = keyCount > 0 ? keyCount : 50;
-                
-                renderGrid();
-                updateStats();
-                
+                // Initialize Exam
                 document.getElementById('user-display').innerHTML = `<b>${nama}</b> (${kelas}-${absen})`;
                 document.getElementById('mapel-display').innerText = selectedMapel.name;
                 
@@ -1080,6 +1021,16 @@
                 document.getElementById('exam-header').classList.add('flex');
                 document.getElementById('exam-body').classList.remove('hidden');
                 document.getElementById('exam-body').classList.add('flex');
+                
+                // --- LOAD SOAL MENGGUNAKAN SISTEM BARU ---
+                // Default ke Server 1 (PDF.js) -> akan auto switch jika gagal
+                switchServer(1);
+
+                const keyCount = Object.keys(activeAnswerKey).length;
+                TOTAL_SOAL = keyCount > 0 ? keyCount : 50;
+                
+                renderGrid();
+                updateStats();
                 startTimer();
             }
         }
@@ -1119,49 +1070,42 @@
             document.getElementById('input-key').value = k;
         }
 
-        // --- MODIFIED SAVE FUNCTION FOR GITHUB AUTO-CONVERT ---
+        // --- MODIFIED SAVE FUNCTION ---
         function savePackageConfig() {
             const id = document.getElementById('admin-mapel-select').value;
-            let url = document.getElementById('input-url').value.trim(); // Trim whitespace
+            let url = document.getElementById('input-url').value.trim(); 
             
-            // --- AUTO CONVERT GITHUB BLOB TO RAW ---
-            // Jika admin copas link browser (ada 'blob'), ubah jadi 'raw' otomatis
+            // Auto Convert Github Blob -> Raw
             if (url.includes('github.com') && url.includes('/blob/')) {
                 url = url.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/');
-                // Update tampilan input agar admin tahu linknya berubah
                 document.getElementById('input-url').value = url; 
-                alert("Sistem mendeteksi link GitHub Browser.\nLink otomatis diubah ke format RAW agar soal terbaca.");
+                alert("Link GitHub otomatis diubah ke format RAW.");
             }
-            // ---------------------------------------------------
 
             const keyRaw = document.getElementById('input-key').value.toUpperCase().replace(/[^A-E]/g, '');
             
             const idx = mapelList.findIndex(x => x.id == id);
             if(idx > -1) {
-                // ENCODE URI HERE TO FIX SPACED LINKS ON MOBILE
-                // Jangan di-encode semua karakter, cukup pastikan aman
                 mapelList[idx].url = url; 
-                
                 const keys = {};
                 for(let i=0; i<keyRaw.length; i++) keys[i+1] = keyRaw[i];
                 mapelList[idx].key = keys;
                 saveMapelLocal();
-                alert(`Konfigurasi Tersimpan!\n\nLink Soal: ${url.substring(0,30)}...\nJumlah Kunci: ${keyRaw.length}`);
+                alert(`Tersimpan!\nLink: ${url.substring(0,20)}...`);
             } else {
-                alert("Pilih Paket Soal terlebih dahulu!");
+                alert("Pilih Paket Soal dulu!");
             }
         }
 
-        function updateSoal() { savePackageConfig(); } // Alias for button
+        function updateSoal() { savePackageConfig(); }
 
         function handleFileUpload(input) {
             if(input.files[0]) {
                 const file = input.files[0];
                 const reader = new FileReader();
                 reader.onload = function(e) { 
-                    // Support PDF dan Image (Base64)
                     document.getElementById('input-url').value = e.target.result; 
-                    alert("File Siap (Base64)! Klik Simpan Konfigurasi."); 
+                    alert("File Siap (Base64)!"); 
                 };
                 reader.readAsDataURL(file);
             }
@@ -1289,7 +1233,6 @@
                 let rows = [];
                 snap.forEach(d => rows.push(d.data()));
                 
-                // Sort: Mapel > Kelas > Absen
                 rows.sort((a,b) => {
                     if(a.mapel !== b.mapel) return a.mapel.localeCompare(b.mapel);
                     const kA = a.kelas.match(/(\d+)([A-Z])/);
@@ -1317,7 +1260,6 @@
         function resetData() { 
             if(!isFirebaseActive) return alert("Fitur ini butuh koneksi database.");
             if(!confirm("Hapus DATA NILAI di Database?")) return;
-            // Logic delete collection (client-side delete all docs)
             getDocs(collection(db, COLLECTION_NAME)).then(snap => {
                 snap.forEach(d => deleteDoc(d.ref));
                 alert("Data bersih.");
