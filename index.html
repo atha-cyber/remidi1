@@ -39,7 +39,7 @@
             </div>
             <div>
                 <h1 class="text-md font-bold leading-tight">Ujian Semester Ganjil</h1>
-                <p class="text-xs text-slate-300">Bahasa Indonesia</p>
+                <p class="text-xs text-slate-300">Bahasa Inggris</p>
             </div>
         </div>
         <div>
@@ -52,18 +52,24 @@
     <div class="flex-1 flex flex-col md:flex-row overflow-hidden relative">
 
         <!-- KIRI: Soal / Flipbook -->
-        <div class="w-full h-[45%] md:h-full md:w-[65%] bg-slate-900 relative shadow-xl z-0 border-r border-slate-700">
+        <div class="w-full h-[45%] md:h-full md:w-[65%] bg-slate-900 relative shadow-xl z-0 border-r border-slate-700 group">
             <!-- Loading -->
             <div class="absolute inset-0 flex items-center justify-center text-slate-500 z-0">
-                <p><i class="fas fa-spinner fa-spin mr-2"></i>Memuat Buku Soal...</p>
+                <p><i class="fas fa-spinner fa-spin mr-2"></i>Memuat Soal...</p>
             </div>
-            <!-- Heyzine Embed -->
+            
+            <!-- PDF Embed via Google Viewer (Lebih Cepat) -->
+            <!-- Kami membungkus link GitHub dengan Google Viewer -->
             <iframe 
-                src="https://heyzine.com/flip-book/dd27c1ad35.html" 
+                src="https://docs.google.com/viewer?url=https://raw.githubusercontent.com/atha-cyber/logo-/main/SOAL-VIII-ASAS12025-BAHASA%20INGGRIS.pdf&embedded=true" 
                 frameborder="0" 
-                allowfullscreen 
                 class="absolute inset-0 w-full h-full z-10"
             ></iframe>
+
+            <!-- Tombol Alternatif (Jika Google Viewer macet) -->
+            <a href="https://raw.githubusercontent.com/atha-cyber/logo-/main/SOAL-VIII-ASAS12025-BAHASA%20INGGRIS.pdf" target="_blank" class="absolute bottom-4 left-4 z-20 bg-slate-800 text-white text-xs px-3 py-1 rounded opacity-50 hover:opacity-100 transition shadow-lg">
+                <i class="fas fa-external-link-alt mr-1"></i> Buka PDF Manual
+            </a>
         </div>
 
         <!-- KANAN: Lembar Jawab Komputer (LJK) -->
