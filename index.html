@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CBT Online Multi-Mapel (10 Slot)</title>
+    <title>CBT Online Multi-Mapel (50 Slot)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -221,7 +221,7 @@
     <!-- PANEL ADMIN -->
     <div id="adminPanel" class="fixed inset-0 bg-gray-100 z-[120] hidden flex flex-col">
         <div class="bg-slate-800 text-white p-4 flex justify-between items-center shadow-md shrink-0">
-            <h2 class="font-bold text-lg"><i class="fas fa-cogs mr-2"></i>Pengaturan Ujian (10 Slot)</h2>
+            <h2 class="font-bold text-lg"><i class="fas fa-cogs mr-2"></i>Pengaturan Ujian (50 Slot)</h2>
             <button onclick="window.closeModal('adminPanel'); window.checkAccess();" class="bg-red-500 hover:bg-red-600 px-3 py-1 rounded text-sm font-bold shadow">Tutup</button>
         </div>
         
@@ -425,7 +425,7 @@
         const OPSI = ['A', 'B', 'C', 'D'];
         const CONFIG_DOC_PATH = 'cbt_apps/settings_v2'; 
         const RESULTS_COLLECTION = 'cbt_results';
-        const TOTAL_MAPEL_SLOTS = 10; 
+        const TOTAL_MAPEL_SLOTS = 50; 
 
         // Initial with isActive true by default
         let subjects = Array(TOTAL_MAPEL_SLOTS).fill(null).map((_, i) => ({ 
