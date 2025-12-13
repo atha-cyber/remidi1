@@ -537,13 +537,18 @@
             const idx = editingTabIndex;
             const rawUrl = document.getElementById('inputUrl').value;
             const cleanUrl = rawUrl ? rawUrl.trim() : '';
+            const rawKey = document.getElementById('inputKey').value.toUpperCase().replace(/[^A-D]/g, '');
+
+            if (rawKey.length !== JUMLAH_SOAL && rawKey.length > 0) {
+                 if(!confirm(`⚠️ PERINGATAN: Jumlah kunci jawaban (${rawKey.length}) tidak sama dengan 40 soal.\n\nNilai siswa mungkin tidak akurat.\n\nTetap simpan?`)) return;
+            }
 
             subjects[idx] = {
                 name: document.getElementById('inputName').value || `Mapel ${idx+1}`,
                 url: cleanUrl,
                 start: document.getElementById('inputStart').value,
                 end: document.getElementById('inputEnd').value,
-                key: document.getElementById('inputKey').value.toUpperCase().replace(/[^A-D]/g, '')
+                key: rawKey
             };
 
             try {
