@@ -128,33 +128,17 @@
 
         <!-- KANAN / BAWAH: LJK (KECIL 35% di HP, 30% di PC) -->
         <div class="w-full h-[35%] md:h-full md:w-[30%] bg-white flex flex-col z-20 shadow-2xl relative">
-            <div class="p-3 bg-blue-50 border-b border-blue-100 flex flex-col gap-2 shrink-0">
-                
-                <!-- TAMPILAN DATA SISWA (READ ONLY) -->
-                <div class="bg-white p-2 rounded border border-blue-200 shadow-sm flex items-center justify-between mb-1">
-                    <div class="flex-1 min-w-0">
-                        <p class="text-[10px] text-gray-400 font-bold uppercase">Nama Peserta</p>
-                        <p id="displayStudentName" class="font-bold text-sm text-slate-800 truncate">...</p>
-                    </div>
-                    <div class="text-right pl-2 border-l border-gray-100">
-                        <p class="text-[10px] text-gray-400 font-bold uppercase">Kls / No</p>
-                        <p class="font-bold text-sm text-blue-600"><span id="displayClass">-</span> / <span id="displayNumber">-</span></p>
-                    </div>
-                </div>
-
-                <div class="flex justify-between items-center text-[10px] sm:text-xs text-blue-700 font-medium px-1">
-                    <span class="bg-blue-100 px-2 py-1 rounded"><i class="fas fa-clock mr-1"></i>Batas Waktu: <span id="infoSelesai">--:--</span></span>
-                    <span><i class="fas fa-list-ol mr-1"></i>40 Soal</span>
-                </div>
-            </div>
-
+            <!-- HEADER LJK (NAMA/WAKTU) DIHAPUS SESUAI PERMINTAAN -->
+            
+            <!-- AREA JAWABAN -->
             <div class="flex-1 overflow-y-auto custom-scroll p-2 bg-slate-50 relative">
                 <form id="ljkForm" class="grid grid-cols-1 gap-2 pb-20"></form>
             </div>
 
+            <!-- TOMBOL KIRIM -->
             <div class="p-3 bg-white border-t border-slate-200 shadow-[0_-5px_15px_rgba(0,0,0,0.1)] z-30">
                 <button onclick="window.submitExam()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-lg active:scale-95 transition flex justify-center items-center gap-2">
-                    <i class="fas fa-paper-plane"></i> KIRIM
+                    <i class="fas fa-paper-plane"></i> SELESAI & KIRIM
                 </button>
             </div>
         </div>
@@ -403,9 +387,14 @@
         }
 
         function updateStudentDisplay() {
-            document.getElementById('displayStudentName').innerText = studentData.name;
-            document.getElementById('displayClass').innerText = studentData.class;
-            document.getElementById('displayNumber').innerText = studentData.number;
+            // Updated to check for element existence before setting text
+            const nameEl = document.getElementById('displayStudentName');
+            const classEl = document.getElementById('displayClass');
+            const numEl = document.getElementById('displayNumber');
+            
+            if(nameEl) nameEl.innerText = studentData.name;
+            if(classEl) classEl.innerText = studentData.class;
+            if(numEl) numEl.innerText = studentData.number;
         }
 
         window.initLJK = function() {
@@ -601,12 +590,15 @@
             document.getElementById('headerSlot').innerText = `MAPEL ${index+1}`;
             document.getElementById('headerMapel').innerText = sub.name;
             
+            // Only update time info if element exists (since we removed it from UI)
             let timeText = "--:--";
             if(sub.end && !forcedMode) {
                 const endTime = new Date(sub.end);
                 timeText = endTime.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'});
             } else if (forcedMode) { timeText = "Manual"; }
-            document.getElementById('infoSelesai').innerText = timeText;
+            
+            const infoEl = document.getElementById('infoSelesai');
+            if(infoEl) infoEl.innerText = timeText;
 
             const frame = document.getElementById('pdfFrame');
             const ph = document.getElementById('pdfPlaceholder');
