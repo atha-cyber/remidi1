@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CBT Online Multi-Mapel (50 Slot)</title>
+    <title>CBT Online Multi-Mapel (Secure Shield)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -19,7 +19,12 @@
             transform: scale(1.05);
         }
 
-        body { overscroll-behavior: none; } /* User select handled by JS if anti-cheat on */
+        /* PERISAI SCROLL & GESTURE */
+        body { 
+            overscroll-behavior: none; /* Mencegah pull-to-refresh */
+            touch-action: pan-x pan-y; /* Mencegah gesture swipe back browser */
+        }
+        
         .split-container { height: calc(100dvh - 50px); } 
         
         .tab-btn.active { background-color: #2563eb; color: white; border-color: #2563eb; }
@@ -179,6 +184,11 @@
     <div class="split-container flex flex-col md:flex-row relative">
         <!-- KIRI / ATAS: Soal PDF (DOMINAN 65% di HP, 70% di PC) -->
         <div class="w-full h-[65%] md:h-full md:w-[70%] bg-slate-800 relative z-10 border-b-4 border-slate-900 md:border-b-0 md:border-r-4 group overflow-hidden">
+            
+            <!-- PERISAI TOOLBAR PDF (TRANSPARENT SHIELD) -->
+            <!-- Div ini menutupi bagian atas iframe (toolbar Google) sehingga tidak bisa diklik -->
+            <div class="absolute top-0 left-0 w-full h-14 bg-transparent z-50 cursor-default"></div>
+
             <!-- Iframe PDF -->
             <iframe id="pdfFrame" src="" class="w-full h-full origin-top-left transition-transform duration-200" frameborder="0"></iframe>
             <!-- (Tombol Zoom yang lama sudah dihapus agar tidak menutupi PDF) -->
@@ -1169,4 +1179,4 @@
         }
     </script>
 </body>
-</html>
+    </html>
