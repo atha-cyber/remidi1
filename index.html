@@ -2,17 +2,12 @@
 <html lang="id" translate="no" class="notranslate">
 <head>
     <meta charset="UTF-8">
-    <!-- REVISI: Mengizinkan user-scalable agar zoom bawaan browser juga bisa bekerja jika script gagal -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, minimal-ui">
-    
-    <!-- OPTIMASI PWA -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#2563eb">
-    
     <link rel="manifest" href='data:application/manifest+json,{"name":"CBT Ujian","short_name":"CBT","start_url":".","display":"standalone","background_color":"#ffffff","theme_color":"#2563eb","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/2995/2995459.png","sizes":"192x192","type":"image/png"}]}'>
-
     <title>CBT Siswa - Ujian Online</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -20,72 +15,27 @@
         .custom-scroll::-webkit-scrollbar { width: 4px; height: 4px; }
         .custom-scroll::-webkit-scrollbar-track { background: #f1f1f1; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        
-        .option-radio:checked + div {
-            background-color: #2563eb; color: white; border-color: #2563eb;
-            transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.4);
-        }
-
-        body { 
-            overscroll-behavior-y: none; 
-            touch-action: pan-x pan-y; 
-            -webkit-user-select: none; 
-            user-select: none; 
-        }
-        
+        .option-radio:checked + div { background-color: #2563eb; color: white; border-color: #2563eb; transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.4); }
+        body { overscroll-behavior-y: none; touch-action: pan-x pan-y; -webkit-user-select: none; user-select: none; }
         .glass-header { background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(5px); }
-        
-        /* Container Soal */
-        #pdfContainer {
-            width: 100%;
-            height: 100%;
-            overflow: auto; 
-            position: relative;
-            background-color: #525659; /* Warna background standar PDF viewer */
-        }
-
-        iframe#pdfFrame { 
-            display: block; 
-            border: none; 
-            width: 100%; 
-            height: 100%; 
-            transform-origin: 0 0; 
-            transition: transform 0.05s ease-out; /* Percepat transisi agar pinch responsif */
-        }
-
-        /* Overlay untuk menangkap gesture pinch */
-        #gestureZone {
-            touch-action: none; /* Penting: mematikan scroll browser saat mode zoom aktif */
-        }
-
+        #pdfContainer { width: 100%; height: 100%; overflow: auto; position: relative; background-color: #525659; }
+        iframe#pdfFrame { display: block; border: none; width: 100%; height: 100%; transform-origin: 0 0; transition: transform 0.05s ease-out; }
+        #gestureZone { touch-action: none; }
         .drive-shield { position: absolute; top: 0; left: 0; width: 100%; height: 60px; z-index: 50; }
-        
-        button:disabled {
-            background-color: #cbd5e1 !important; color: #64748b !important; cursor: not-allowed;
-            transform: none !important; box-shadow: none !important;
-        }
-        
-        /* Indikator Mode */
-        .mode-badge {
-            animation: fadeIn 0.3s ease-out;
-        }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        button:disabled { background-color: #cbd5e1 !important; color: #64748b !important; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
     </style>
 </head>
 <body class="bg-gray-100 h-[100dvh] w-screen overflow-hidden font-sans text-gray-800 flex flex-col">
 
-    <!-- 1. HALAMAN LOGIN -->
+    <!-- LOGIN -->
     <div id="dashboardView" class="fixed inset-0 bg-slate-50 z-[200] flex flex-col overflow-hidden">
         <div class="bg-blue-600 pb-12 pt-6 px-6 rounded-b-[2.5rem] shadow-lg shrink-0 relative overflow-hidden">
             <div class="relative z-10 flex justify-center text-center">
-                <div>
-                    <div class="flex flex-col items-center mb-2">
-                        <!-- LOGO -->
-                        <img src="https://i.ibb.co.com/DfC8xNjL/LOGO-HD-SMP-4-removebg-preview.png" alt="Logo" class="h-24 w-auto mb-3 drop-shadow-md">
-                        <div>
-                            <h1 class="text-2xl font-extrabold text-white">CBT Online</h1>
-                            <span class="text-blue-200 text-xs font-bold tracking-widest">SMP NEGERI 4 PANDAK</span>
-                        </div>
+                <div class="flex flex-col items-center mb-2">
+                    <img src="https://i.ibb.co.com/DfC8xNjL/LOGO-HD-SMP-4-removebg-preview.png" alt="Logo" class="h-24 w-auto mb-3 drop-shadow-md">
+                    <div>
+                        <h1 class="text-2xl font-extrabold text-white">CBT Online</h1>
+                        <span class="text-blue-200 text-xs font-bold tracking-widest">SMP NEGERI 4 PANDAK</span>
                     </div>
                 </div>
             </div>
@@ -93,9 +43,7 @@
 
         <div class="flex-1 overflow-y-auto -mt-8 px-4 pb-10 custom-scroll z-20">
             <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100 mb-6 relative z-30">
-                <h3 class="font-bold text-gray-700 mb-4 text-sm uppercase tracking-wide border-b pb-2">
-                    <i class="fas fa-id-card mr-2 text-blue-500"></i>Identitas Peserta
-                </h3>
+                <h3 class="font-bold text-gray-700 mb-4 text-sm uppercase tracking-wide border-b pb-2"><i class="fas fa-id-card mr-2 text-blue-500"></i>Identitas Peserta</h3>
                 <div class="space-y-4">
                     <div>
                         <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Nama Lengkap</label>
@@ -113,91 +61,68 @@
                     </div>
                 </div>
             </div>
-
             <h3 class="font-bold text-gray-600 mb-3 px-2 text-sm uppercase tracking-wide">Ujian Tersedia</h3>
-            <div id="examGrid" class="grid grid-cols-1 gap-3">
-                <div class="text-center text-gray-400 mt-8">
-                    <div class="spinner mx-auto mb-2 w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
-                    <p class="text-xs">Menghubungkan ke Server...</p>
-                </div>
-            </div>
+            <div id="examGrid" class="grid grid-cols-1 gap-3"></div>
         </div>
-        <div class="p-2 text-center text-[10px] text-gray-400 bg-white border-t">Aplikasi CBT Siswa &copy; 2024</div>
     </div>
 
-    <!-- 2. LOADING -->
+    <!-- LOADING & OVERLAYS -->
     <div id="firebase-loader" class="fixed inset-0 bg-white/95 flex flex-col justify-center items-center z-[250] hidden transition-opacity duration-300">
         <div class="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
-        <p class="text-blue-600 font-bold text-sm mt-4 animate-pulse" id="loaderText">Memuat Data...</p>
+        <p class="text-blue-600 font-bold text-sm mt-4 animate-pulse">Memuat Data...</p>
     </div>
-
-    <!-- 3. ANTI CURANG -->
     <div id="cheatOverlay" class="fixed inset-0 bg-red-600/95 hidden flex-col justify-center items-center text-white p-6 text-center z-[250]">
         <i class="fas fa-exclamation-triangle text-6xl mb-4 text-yellow-300 animate-bounce"></i>
         <h2 class="text-2xl font-bold mb-2">PELANGGARAN!</h2>
         <p class="mb-6">Anda terdeteksi keluar dari aplikasi ujian.</p>
-        <button onclick="window.resumeExam()" class="bg-white text-red-600 px-8 py-3 rounded-full font-bold shadow-lg active:scale-95 transition hover:bg-gray-100">KEMBALI KE UJIAN</button>
+        <button onclick="window.resumeExam()" class="bg-white text-red-600 px-8 py-3 rounded-full font-bold shadow-lg">KEMBALI KE UJIAN</button>
     </div>
 
-    <!-- 4. HEADER -->
+    <!-- HEADER UJIAN -->
     <header class="h-14 glass-header text-white flex items-center px-3 justify-between shadow-md shrink-0 z-[60] relative">
-        <div class="flex flex-col overflow-hidden mr-2 hidden md:flex"> <!-- REVISI: Hidden di Mobile -->
+        <div class="flex flex-col overflow-hidden mr-2 hidden md:flex">
             <span id="headerMapel" class="font-bold text-sm truncate max-w-[120px]">Memuat...</span>
             <div id="timerContainer" class="flex items-center gap-1.5 text-xs font-mono text-yellow-300">
                 <i class="fas fa-clock"></i> <span id="timerDisplay">00:00:00</span>
             </div>
         </div>
-        <div class="flex items-center gap-1 w-full md:w-auto justify-between md:justify-end"> <!-- REVISI: Full width di mobile agar tombol tersebar -->
-            <!-- Tombol Mode Toggle dengan Notifikasi di Sampingnya -->
+        <div class="flex items-center gap-1 w-full md:w-auto justify-between md:justify-end">
             <div class="relative flex items-center">
-                <!-- REVISI: Menghapus label textMode di bawah ikon -->
-                <button id="btnToggleMode" onclick="window.toggleGestureMode()" class="w-10 h-8 rounded bg-yellow-500/20 text-yellow-300 border border-yellow-500/50 flex items-center justify-center active:scale-95 transition mr-2 relative" title="Ganti Mode Sentuh">
+                <button id="btnToggleMode" onclick="window.toggleGestureMode()" class="w-10 h-8 rounded bg-yellow-500/20 text-yellow-300 border border-yellow-500/50 flex items-center justify-center active:scale-95 transition mr-2 relative">
                     <i class="fas fa-hand-pointer text-xs" id="iconMode"></i>
                 </button>
-                <!-- Notifikasi Toast Samping Tombol (Permanen saat aktif) -->
-                <div id="modeToast" class="absolute left-12 top-1/2 -translate-y-1/2 bg-slate-800 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg shadow-xl opacity-0 transition-opacity duration-300 pointer-events-none whitespace-nowrap z-50 border border-slate-600">
-                    Mode Scroll Aktif
-                </div>
+                <div id="modeToast" class="absolute left-12 top-1/2 -translate-y-1/2 bg-slate-800 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg shadow-xl opacity-0 transition-opacity duration-300 whitespace-nowrap z-50">Mode Scroll Aktif</div>
             </div>
-
             <div class="flex items-center">
                 <div class="flex items-center bg-white/10 rounded mr-2 border border-white/20">
-                    <button onclick="window.zoomPdf(-0.2)" class="w-8 h-8 flex items-center justify-center active:scale-90 text-xs font-bold border-r border-white/20"><i class="fas fa-minus"></i></button>
-                    <button onclick="window.resetZoom()" class="w-8 h-8 flex items-center justify-center active:scale-90 text-[10px] font-bold">RST</button>
-                    <button onclick="window.zoomPdf(0.2)" class="w-8 h-8 flex items-center justify-center active:scale-90 text-xs font-bold border-l border-white/20"><i class="fas fa-plus"></i></button>
+                    <button onclick="window.zoomPdf(-0.2)" class="w-8 h-8 flex items-center justify-center text-xs"><i class="fas fa-minus"></i></button>
+                    <button onclick="window.resetZoom()" class="w-8 h-8 flex items-center justify-center text-[10px]">RST</button>
+                    <button onclick="window.zoomPdf(0.2)" class="w-8 h-8 flex items-center justify-center text-xs"><i class="fas fa-plus"></i></button>
                 </div>
-
-                <button onclick="window.reloadFrame()" class="w-8 h-8 rounded bg-white/10 flex items-center justify-center active:scale-95 hover:bg-white/20 transition"><i class="fas fa-sync-alt text-xs"></i></button>
-                <button onclick="window.location.reload()" class="bg-red-500 hover:bg-red-600 text-white w-8 h-8 rounded flex items-center justify-center font-bold ml-1 active:scale-95 transition"><i class="fas fa-power-off text-xs"></i></button>
+                <button onclick="window.reloadFrame()" class="w-8 h-8 rounded bg-white/10 flex items-center justify-center"><i class="fas fa-sync-alt text-xs"></i></button>
+                <button onclick="window.location.reload()" class="bg-red-500 text-white w-8 h-8 rounded flex items-center justify-center"><i class="fas fa-power-off text-xs"></i></button>
             </div>
         </div>
     </header>
 
-    <!-- 5. AREA UTAMA -->
+    <!-- MAIN AREA -->
     <div class="flex-1 relative overflow-hidden bg-gray-200">
-        <!-- PDF Viewer -->
         <div id="view-soal" class="absolute inset-0 md:w-[70%] md:relative md:float-left h-full z-10 transition-transform duration-300 ease-in-out bg-white overflow-hidden">
             <div class="drive-shield"></div>
-            
-            <!-- Placeholder saat loading atau error -->
             <div class="absolute inset-0 flex items-center justify-center bg-white text-slate-400 z-0" id="pdfPlaceholder">
                 <div class="text-center p-4">
                     <i class="fas fa-circle-notch fa-spin text-4xl mb-3 text-blue-400"></i>
                     <p class="text-sm font-bold text-gray-500">Sedang Memuat Soal...</p>
-                    <p class="text-xs mt-2 text-gray-400">Jika macet, tekan tombol <i class="fas fa-sync-alt"></i> di atas.</p>
                 </div>
             </div>
-            
             <div id="pdfContainer">
                 <iframe id="pdfFrame" src="" allow="autoplay"></iframe>
-                <!-- Gesture Zone Overlay (Default Hidden) -->
                 <div id="gestureZone" class="absolute inset-0 z-30 hidden bg-transparent"></div>
             </div>
         </div>
 
-        <!-- LJK -->
         <div id="view-ljk" class="absolute inset-0 md:w-[30%] md:static md:float-right bg-slate-50 h-full z-20 md:z-auto translate-y-full md:translate-y-0 transition-transform duration-300 flex flex-col shadow-2xl border-l border-gray-300">
-            <div class="md:hidden bg-white border-b px-4 py-3 flex justify-between items-center shadow-sm shrink-0">
+            <div class="md:hidden bg-white border-b px-4 py-3 flex justify-between items-center shrink-0">
                 <h3 class="font-bold text-gray-700">Lembar Jawab</h3>
                 <span class="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded font-bold" id="progressText">0/0</span>
             </div>
@@ -214,45 +139,40 @@
         </div>
     </div>
 
-    <!-- 6. NAVIGASI MOBILE -->
-    <div class="md:hidden h-[60px] bg-white border-t flex justify-around items-center shrink-0 z-40 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
-        <!-- REVISI: Memindahkan Mapel ke sini dan menambahkan kata "Soal" dibawahnya -->
-        <button onclick="window.switchView('soal')" id="nav-soal" class="flex flex-col items-center justify-center w-full h-full text-blue-600 bg-blue-50/50 border-t-2 border-blue-600 transition-all px-2">
+    <!-- MOBILE NAV -->
+    <div class="md:hidden h-[60px] bg-white border-t flex justify-around items-center shrink-0 z-40">
+        <button onclick="window.switchView('soal')" id="nav-soal" class="flex flex-col items-center justify-center w-full h-full text-blue-600 bg-blue-50/50 border-t-2 border-blue-600 px-2">
             <i class="fas fa-book-open text-lg mb-0.5"></i>
-            <span id="mobileMapelDisplay" class="text-[10px] font-bold truncate max-w-[120px] leading-tight">Soal</span>
-            <span class="text-[8px] font-bold leading-none mt-0.5">SOAL</span> <!-- Penambahan Kata SOAL -->
+            <span id="mobileMapelDisplay" class="text-[10px] font-bold truncate max-w-[120px]">Soal</span>
+            <span class="text-[8px] font-bold uppercase">SOAL</span>
         </button>
-        <!-- REVISI: Memindahkan Timer ke sini dan mengubah warna teks Jawaban jadi Biru -->
-        <button onclick="window.switchView('ljk')" id="nav-ljk" class="flex flex-col items-center justify-center w-full h-full text-blue-600 border-t-2 border-transparent transition-all"> <!-- Warna teks diubah ke blue-600 -->
+        <button onclick="window.switchView('ljk')" id="nav-ljk" class="flex flex-col items-center justify-center w-full h-full text-blue-600 border-t-2 border-transparent">
             <i class="fas fa-edit text-lg mb-0.5"></i>
-            <span class="text-[10px] font-bold leading-none mb-0.5">Jawaban</span>
-            <span id="mobileTimerDisplay" class="text-[10px] font-mono text-red-500 font-bold bg-red-50 px-1 rounded border border-red-100 leading-none">00:00</span>
+            <span class="text-[10px] font-bold mb-0.5">Jawaban</span>
+            <span id="mobileTimerDisplay" class="text-[10px] font-mono text-red-500 font-bold bg-red-50 px-1 rounded border border-red-100">00:00</span>
         </button>
     </div>
 
-    <!-- 7. RESULT -->
+    <!-- RESULT MODAL -->
     <div id="resultModal" class="fixed inset-0 bg-slate-900/90 backdrop-blur-sm z-[350] hidden flex items-center justify-center p-6">
-        <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl p-8 text-center animate-[bounce_0.5s_ease-out]">
+        <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl p-8 text-center">
             <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fas fa-check"></i></div>
             <h2 class="text-2xl font-bold text-slate-800 mb-1">Ujian Selesai!</h2>
             <p id="resMapelName" class="text-blue-600 font-bold text-sm mb-6 uppercase tracking-wide">...</p>
             <div id="scoreContainer" class="hidden mb-6">
-                <div class="text-7xl font-extrabold text-slate-800 mb-2 tracking-tighter" id="resScore">0</div>
-                <div class="flex justify-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-widest">Nilai Akhir</div>
+                <div class="text-7xl font-extrabold text-slate-800 mb-2" id="resScore">0</div>
+                <div class="text-xs font-bold text-gray-400 uppercase tracking-widest">Nilai Akhir</div>
             </div>
-            <div id="hiddenScoreMsg" class="hidden py-4 px-2 bg-gray-50 rounded-lg text-gray-600 text-sm mb-4 border border-gray-200">
-                Jawaban Anda telah berhasil dikirim ke server sekolah.<br>Silakan lapor kepada pengawas.
-            </div>
-            <button onclick="window.location.reload()" class="w-full bg-slate-800 hover:bg-slate-900 text-white py-3.5 rounded-xl font-bold shadow-lg transition transform active:scale-95">KELUAR APLIKASI</button>
+            <div id="hiddenScoreMsg" class="hidden py-4 px-2 bg-gray-50 rounded-lg text-gray-600 text-sm mb-4 border border-gray-200">Jawaban Anda telah terkirim.<br>Silakan lapor kepada pengawas.</div>
+            <button onclick="window.location.reload()" class="w-full bg-slate-800 text-white py-3.5 rounded-xl font-bold shadow-lg">KELUAR</button>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, doc, setDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-        // FIREBASE CONFIG
         const firebaseConfig = { apiKey: "AIzaSyDy6E0FpxFAV8Fq2ayO1UWd2UMC19xLHgM", authDomain: "vooting-guru.firebaseapp.com", projectId: "vooting-guru", storageBucket: "vooting-guru.firebasestorage.app", messagingSenderId: "643701954972", appId: "1:643701954972:web:5db3499faeb8ca91919059" };
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -262,10 +182,8 @@
 
         const OPSI = ['A','B','C','D'];
         let subjects = [], forcedMode=false, showScore=false, antiCheat=true;
-        let selectedExamIdx = -1, studentData = {}, examTimer, violations = 0, currentQCount = 40, currentZoom = 1.0;
-        let isGestureMode = false;
+        let selectedExamIdx = -1, studentData = {}, examTimer, violations = 0, currentQCount = 40, currentZoom = 1.0, isGestureMode = false;
 
-        // Init UI
         const clsSel = document.getElementById('loginClass'); ['7','8','9'].forEach(g=>['A','B','C','D','E'].forEach(l=>{ const o=document.createElement('option');o.value=g+l;o.text=g+l;clsSel.add(o) }));
         const numSel = document.getElementById('loginNumber'); for(let i=1;i<=40;i++){ const o=document.createElement('option');o.value=i;o.text=i;numSel.add(o) }
 
@@ -280,13 +198,12 @@
                     }
                     window.renderDashboard();
                 });
-            } catch(e) { alert("Gagal Terhubung: " + e.message); }
+            } catch(e) { console.error("Firebase Error:", e); }
         }
 
         window.renderDashboard = () => {
             const grid = document.getElementById('examGrid'); grid.innerHTML = '';
             const now = new Date();
-            let hasActive = false;
             subjects.forEach((sub, idx) => {
                 if(sub.isActive === false) return;
                 let status = "closed", statusText = "TUTUP", statusColor = "bg-red-100 text-red-600";
@@ -294,24 +211,21 @@
                 else if (sub.start && sub.end) {
                     const s = new Date(sub.start), e = new Date(sub.end);
                     if(now >= s && now <= e) { status = "active"; statusText = "BERLANGSUNG"; statusColor = "bg-green-100 text-green-600 animate-pulse"; }
-                    else if (now < s) { status = "future"; statusText = "BELUM MULAI"; statusColor = "bg-yellow-100 text-yellow-600"; }
                 }
                 if(status !== 'closed' || forcedMode) { 
-                    hasActive = true;
                     const isActive = status === 'active';
-                    grid.innerHTML += `<div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-3 transition hover:shadow-md"><div class="flex justify-between items-start mb-2"><h3 class="font-bold text-lg text-slate-800 w-3/4 leading-tight">${sub.name}</h3><span class="text-[10px] font-bold px-2 py-1 rounded ${statusColor}">${statusText}</span></div><div class="text-xs text-gray-500 mb-4 flex items-center"><i class="far fa-clock mr-1"></i> ${sub.start ? new Date(sub.start).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : '--:--'} - ${sub.end ? new Date(sub.end).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : '--:--'}</div><button ${isActive ? `onclick="window.attemptStart(${idx})"` : 'disabled'} class="w-full font-bold py-3 rounded-lg transition ${isActive ? "bg-blue-600 text-white shadow-lg active:scale-95 hover:bg-blue-700" : "bg-gray-200 text-gray-400 cursor-not-allowed"}">${isActive ? "KERJAKAN SEKARANG" : "BELUM DIBUKA"}</button></div>`;
+                    grid.innerHTML += `<div class="bg-white p-4 rounded-xl shadow-sm border mb-3"><div class="flex justify-between items-start mb-2"><h3 class="font-bold text-lg text-slate-800 leading-tight">${sub.name}</h3><span class="text-[10px] font-bold px-2 py-1 rounded ${statusColor}">${statusText}</span></div><button ${isActive ? `onclick="window.attemptStart(${idx})"` : 'disabled'} class="w-full font-bold py-3 rounded-lg ${isActive ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-400"}">${isActive ? "KERJAKAN" : "BELUM DIBUKA"}</button></div>`;
                 }
             });
-            if(!hasActive) grid.innerHTML = `<div class="text-center p-10 text-gray-400"><i class="fas fa-coffee text-4xl mb-3 text-gray-300"></i><p>Belum ada jadwal ujian.</p></div>`;
         }
 
         window.attemptStart = (idx) => {
             const n = document.getElementById('loginName').value.trim(), c = document.getElementById('loginClass').value, no = document.getElementById('loginNumber').value;
-            if(!n || !c || !no) return alert("Harap lengkapi Nama, Kelas, dan No Absen!");
-            studentData = {name:n, class:c, number:no}; selectedExamIdx = idx;
-            
-            window.enterFullScreen(); // Trigger fullscreen interaction
-            if(confirm(`Mulai mengerjakan ${subjects[idx].name}?\n\nNama: ${studentData.name}\nKelas: ${studentData.class}`)) {
+            if(!n || !c || !no) return alert("Lengkapi Identitas!");
+            studentData = {name:n, class:c, number:no}; 
+            selectedExamIdx = idx;
+            window.enterFullScreen();
+            if(confirm(`Mulai ${subjects[idx].name}?\nNama: ${studentData.name}\nAbsen: ${studentData.number}`)) {
                 document.getElementById('dashboardView').classList.add('hidden');
                 window.loadExam(idx);
             }
@@ -320,30 +234,19 @@
         window.loadExam = (idx) => {
             const sub = subjects[idx];
             document.getElementById('headerMapel').innerText = sub.name;
-            // REVISI: Update Mapel di tombol bawah (mobile)
             document.getElementById('mobileMapelDisplay').innerText = sub.name;
-
             currentQCount = sub.qCount ? parseInt(sub.qCount) : 40;
             const f = document.getElementById('ljkForm'); f.innerHTML = '';
             for(let i=1; i<=currentQCount; i++){
                 f.innerHTML += `<div class="bg-white p-3 rounded-lg border shadow-sm flex items-center justify-between"><div class="w-8 font-bold text-gray-500 text-sm">${i}.</div><div class="flex-1 flex justify-end gap-3">${OPSI.map(o=>`<label class="cursor-pointer relative"><input type="radio" name="q${i}" value="${o}" class="sr-only option-radio" onchange="window.saveAnswer(${i},'${o}')"><div class="w-9 h-9 rounded-full border border-gray-300 flex items-center justify-center font-bold text-gray-500 bg-gray-50 hover:bg-blue-50 hover:text-blue-600 transition">${o}</div></label>`).join('')}</div></div>`;
             }
-            
             let src = sub.url || '';
             if(src) {
-                // Konversi Link Google Drive ke Preview Mode
                 if (src.includes('drive.google.com') && src.includes('/view')) src = src.replace('/view', '/preview');
-                else if (src.includes('drive.google.com') && src.includes('open?id=')) src = `https://drive.google.com/file/d/${src.split('id=')[1].split('&')[0]}/preview`;
-                
                 const frame = document.getElementById('pdfFrame');
                 frame.src = src;
-                
-                // Event listener jika iframe gagal load (opsional, karena cross-origin sulit dideteksi)
                 frame.onload = () => document.getElementById('pdfPlaceholder').classList.add('hidden');
-            } else {
-                document.getElementById('pdfPlaceholder').innerHTML = '<div class="text-center text-red-400 font-bold"><p>Soal belum diatur</p></div>';
             }
-
             const saved = JSON.parse(localStorage.getItem(`cbt_save_${idx}`) || '{}');
             Object.keys(saved).forEach(q=>{ const el = document.querySelector(`input[name="q${q}"][value="${saved[q]}"]`); if(el) el.checked = true; });
             updateProgress();
@@ -363,23 +266,14 @@
         function updateProgress() { 
             const done = document.querySelectorAll('input.option-radio:checked').length;
             document.getElementById('progressText').innerText = `${done}/${currentQCount}`; 
-            const btnM = document.getElementById('btnSubmitMobile');
-            const btnD = document.getElementById('btnSubmitDesktop');
-            if(done >= currentQCount) {
-                btnM.disabled = false; btnM.innerText = "KIRIM JAWABAN"; btnM.style.backgroundColor = "#2563eb"; btnM.style.color = "white";
-                btnD.disabled = false; btnD.innerText = "KIRIM JAWABAN"; btnD.style.backgroundColor = "#2563eb"; btnD.style.color = "white";
-            } else {
-                btnM.disabled = true; btnM.innerText = `JAWABAN BELUM LENGKAP (${done}/${currentQCount})`; 
-                btnD.disabled = true; btnD.innerText = `JAWABAN BELUM LENGKAP (${done}/${currentQCount})`; 
-            }
+            const btnM = document.getElementById('btnSubmitMobile'), btnD = document.getElementById('btnSubmitDesktop');
+            const isFull = done >= currentQCount;
+            [btnM, btnD].forEach(b => { b.disabled = !isFull; b.innerText = isFull ? "KIRIM JAWABAN" : `BELUM LENGKAP (${done}/${currentQCount})`; if(isFull) { b.classList.add('bg-blue-600', 'text-white'); } });
         }
 
         window.submitExam = async (force=false) => {
             const ans = document.querySelectorAll('input.option-radio:checked').length;
-            if (!force) {
-                if (ans < currentQCount) return alert(`JAWABAN BELUM LENGKAP! (${ans}/${currentQCount})`);
-                if(!confirm("Yakin ingin mengirim jawaban?")) return;
-            }
+            if (!force && (ans < currentQCount || !confirm("Kirim sekarang?"))) return;
             document.getElementById('firebase-loader').classList.remove('hidden');
             const sub = subjects[selectedExamIdx], key = sub.key || '';
             let correct = 0;
@@ -388,178 +282,64 @@
                 if(v === (key[i-1]||'?')) correct++;
             }
             const score = Math.round((correct/currentQCount)*100);
-            const detail = `${correct} Benar, ${currentQCount-correct} Salah`;
             
             try {
-                const id = `${sub.name}_${studentData.class}_${studentData.name}`.replace(/[^a-zA-Z0-9]/g,'_');
-                await setDoc(doc(db, RES_COLL, id), { time: new Date().toLocaleString(), mapel: sub.name, name: studentData.name, class: studentData.class, score: score, correct: correct, detail: detail, timestamp: Date.now(), totalSoal: currentQCount });
+                // REVISI: Mengirim nomor absen ke Firestore
+                const id = `${sub.name}_${studentData.class}_${studentData.number}_${studentData.name}`.replace(/[^a-zA-Z0-9]/g,'_');
+                await setDoc(doc(db, RES_COLL, id), { 
+                    time: new Date().toLocaleString(), 
+                    mapel: sub.name, 
+                    name: studentData.name, 
+                    class: studentData.class, 
+                    noAbsen: studentData.number, // <--- Perbaikan di sini
+                    score: score, 
+                    correct: correct, 
+                    timestamp: Date.now(), 
+                    totalSoal: currentQCount 
+                });
                 localStorage.removeItem(`cbt_save_${selectedExamIdx}`);
-                document.getElementById('resScore').innerText = score; document.getElementById('resMapelName').innerText = sub.name;
-                if(showScore) { document.getElementById('scoreContainer').classList.remove('hidden'); document.getElementById('hiddenScoreMsg').classList.add('hidden'); }
-                else { document.getElementById('scoreContainer').classList.add('hidden'); document.getElementById('hiddenScoreMsg').classList.remove('hidden'); }
-                document.getElementById('firebase-loader').classList.add('hidden'); document.getElementById('resultModal').classList.remove('hidden'); document.getElementById('cheatOverlay').style.display = 'none';
-            } catch(e){ document.getElementById('firebase-loader').classList.add('hidden'); alert("Gagal Mengirim: "+e.message); }
+                document.getElementById('resScore').innerText = score;
+                if(showScore) document.getElementById('scoreContainer').classList.remove('hidden'); else document.getElementById('hiddenScoreMsg').classList.remove('hidden');
+                document.getElementById('firebase-loader').classList.add('hidden'); document.getElementById('resultModal').classList.remove('hidden');
+            } catch(e){ alert("Gagal: "+e.message); }
         }
 
-        // --- ZOOM & FULLSCREEN ---
-        window.zoomPdf = (delta) => {
-            const frame = document.getElementById('pdfFrame'); if(!frame) return;
-            currentZoom += delta; if(currentZoom < 0.5) currentZoom = 0.5; if(currentZoom > 5.0) currentZoom = 5.0;
-            frame.style.transform = `scale(${currentZoom})`;
-            // Jika mode gesture aktif, update variabel internal zoom
-            if(isGestureMode) initialZoom = currentZoom;
-        }
-        window.resetZoom = () => { currentZoom = 1.0; const f = document.getElementById('pdfFrame'); if(f) { f.style.transform = `scale(1)`; } }
-        
-        window.enterFullScreen = () => {
-            const elem = document.documentElement;
-            try {
-                if (elem.requestFullscreen) {
-                    elem.requestFullscreen().catch(e => console.log("Fullscreen blocked:", e));
-                } else if (elem.webkitRequestFullscreen) {
-                    elem.webkitRequestFullscreen();
-                }
-            } catch (err) {
-                console.log("Fullscreen error:", err);
-            }
-        }
-        
-        window.toggleFullScreen = () => {
-            if (!document.fullscreenElement) window.enterFullScreen();
-            else if (document.exitFullscreen) document.exitFullscreen();
-        }
-
+        window.zoomPdf = (delta) => { currentZoom += delta; currentZoom = Math.min(Math.max(currentZoom, 0.5), 5); document.getElementById('pdfFrame').style.transform = `scale(${currentZoom})`; }
+        window.resetZoom = () => { currentZoom = 1.0; document.getElementById('pdfFrame').style.transform = `scale(1)`; }
+        window.enterFullScreen = () => { const e = document.documentElement; if(e.requestFullscreen) e.requestFullscreen().catch(() => {}); }
         function startTimer(endStr) {
             clearInterval(examTimer); const end = new Date(endStr).getTime();
             examTimer = setInterval(() => {
                 const diff = end - Date.now();
-                if(diff<=0) { clearInterval(examTimer); alert("WAKTU HABIS!"); window.submitExam(true); return; }
+                if(diff<=0) { clearInterval(examTimer); window.submitExam(true); return; }
                 const h=Math.floor(diff/3600000), m=Math.floor((diff%3600000)/60000), s=Math.floor((diff%60000)/1000);
                 const txt = `${h}:${m<10?'0'+m:m}:${s<10?'0'+s:s}`;
                 document.getElementById('timerDisplay').innerText = txt;
-                // REVISI: Update timer di tombol bawah (mobile)
-                const mobileTimer = document.getElementById('mobileTimerDisplay');
-                if(mobileTimer) mobileTimer.innerText = txt;
+                if(document.getElementById('mobileTimerDisplay')) document.getElementById('mobileTimerDisplay').innerText = txt;
             }, 1000);
         }
-
         window.switchView = (v) => {
             const l=document.getElementById('view-ljk'), bs=document.getElementById('nav-soal'), bl=document.getElementById('nav-ljk');
-            if(v==='soal') { 
-                l.classList.add('translate-y-full'); 
-                bs.classList.add('bg-blue-50/30','border-blue-600'); 
-                bl.classList.remove('bg-blue-50/30','border-blue-600'); 
-            }
-            else { 
-                l.classList.remove('translate-y-full'); 
-                bl.classList.add('bg-blue-50/30','border-blue-600'); 
-                bs.classList.remove('bg-blue-50/30','border-blue-600'); 
-            }
+            if(v==='soal') { l.classList.add('translate-y-full'); bs.classList.add('bg-blue-50/50','border-blue-600'); bl.classList.remove('bg-blue-50/50','border-blue-600'); }
+            else { l.classList.remove('translate-y-full'); bl.classList.add('bg-blue-50/50','border-blue-600'); bs.classList.remove('bg-blue-50/50','border-blue-600'); }
         }
-        
-        window.reloadFrame = () => { const f=document.getElementById('pdfFrame'); const s=f.src; f.src=''; setTimeout(()=>f.src=s, 200); }
+        window.reloadFrame = () => { const f=document.getElementById('pdfFrame'), s=f.src; f.src=''; setTimeout(()=>f.src=s, 200); }
         window.resumeExam = () => document.getElementById('cheatOverlay').classList.add('hidden');
-        document.addEventListener("contextmenu", e => { if(antiCheat && selectedExamIdx!==-1) e.preventDefault(); });
-        document.addEventListener("visibilitychange", () => {
-            if(selectedExamIdx!==-1 && antiCheat && document.hidden) {
-                violations++; document.getElementById('cheatOverlay').classList.remove('hidden'); document.getElementById('cheatOverlay').style.display = 'flex';
-                if(violations >= 3) { alert("PELANGGARAN: Terlalu sering keluar!"); window.submitExam(true); }
-            }
-        });
+        document.addEventListener("visibilitychange", () => { if(selectedExamIdx!==-1 && antiCheat && document.hidden) { violations++; document.getElementById('cheatOverlay').classList.remove('hidden'); if(violations >= 3) window.submitExam(true); } });
 
-        // --- GESTURE & PINCH LOGIC ---
-        
-        // Toggle antara Mode Scroll (bisa klik link/scroll pdf) dan Mode Zoom (bisa pinch)
         window.toggleGestureMode = () => {
             isGestureMode = !isGestureMode;
-            const overlay = document.getElementById('gestureZone');
-            const btn = document.getElementById('btnToggleMode');
-            const icon = document.getElementById('iconMode');
-            // Toast notifikasi samping tombol
-            const toast = document.getElementById('modeToast');
-
-            if (isGestureMode) {
-                overlay.classList.remove('hidden'); // Aktifkan overlay penangkap sentuhan
-                icon.className = 'fas fa-search-plus text-xs';
-                // Update tampilan tombol
-                btn.classList.replace('bg-yellow-500/20', 'bg-blue-600');
-                btn.classList.replace('text-yellow-300', 'text-white');
-                // Update teks notifikasi
-                if(toast) toast.innerText = "Mode Zoom Aktif";
-            } else {
-                overlay.classList.add('hidden'); // Matikan overlay, kembali ke interaksi iframe
-                icon.className = 'fas fa-hand-pointer text-xs';
-                // Update tampilan tombol
-                btn.classList.replace('bg-blue-600', 'bg-yellow-500/20');
-                btn.classList.replace('text-white', 'text-yellow-300');
-                // Update teks notifikasi
-                if(toast) toast.innerText = "Mode Scroll Aktif";
-            }
-
-            // REVISI: Toast dibuat permanen (tidak hilang otomatis) saat diubah
-            if(toast) {
-                toast.classList.remove('opacity-0');
-                // Hapus logika setTimeout agar tidak hilang otomatis
-            }
+            const overlay = document.getElementById('gestureZone'), btn = document.getElementById('btnToggleMode'), icon = document.getElementById('iconMode'), toast = document.getElementById('modeToast');
+            overlay.classList.toggle('hidden', !isGestureMode);
+            icon.className = isGestureMode ? 'fas fa-search-plus text-xs' : 'fas fa-hand-pointer text-xs';
+            btn.className = isGestureMode ? "w-10 h-8 rounded bg-blue-600 text-white border border-blue-600 flex items-center justify-center mr-2 relative" : "w-10 h-8 rounded bg-yellow-500/20 text-yellow-300 border border-yellow-500/50 flex items-center justify-center mr-2 relative";
+            if(toast) { toast.innerText = isGestureMode ? "Mode Zoom Aktif" : "Mode Scroll Aktif"; toast.classList.remove('opacity-0'); }
         };
 
-        // Logic Pinch pada Overlay
-        const gestureZone = document.getElementById('gestureZone');
-        const pdfContainer = document.getElementById('pdfContainer');
-        let initialDistance = 0;
-        let initialZoom = 1;
-        
-        // Variables for Panning
-        let lastX = 0, lastY = 0;
-
-        gestureZone.addEventListener('touchstart', (e) => {
-            if (e.touches.length === 2) {
-                // Pinch Start
-                initialDistance = Math.hypot(
-                    e.touches[0].pageX - e.touches[1].pageX,
-                    e.touches[0].pageY - e.touches[1].pageY
-                );
-                initialZoom = currentZoom;
-            } else if (e.touches.length === 1) {
-                // Pan Start
-                lastX = e.touches[0].pageX;
-                lastY = e.touches[0].pageY;
-            }
-        }, { passive: false });
-
-        gestureZone.addEventListener('touchmove', (e) => {
-            e.preventDefault(); // Stop default browser behavior on overlay
-            
-            if (e.touches.length === 2) {
-                // Pinch Move
-                const currentDistance = Math.hypot(
-                    e.touches[0].pageX - e.touches[1].pageX,
-                    e.touches[0].pageY - e.touches[1].pageY
-                );
-
-                if (initialDistance > 0) {
-                    const scaleChange = currentDistance / initialDistance;
-                    let newZoom = initialZoom * scaleChange;
-                    if (newZoom < 0.5) newZoom = 0.5;
-                    if (newZoom > 6.0) newZoom = 6.0;
-                    currentZoom = newZoom;
-                    
-                    const frame = document.getElementById('pdfFrame');
-                    if(frame) frame.style.transform = `scale(${currentZoom})`;
-                }
-            } else if (e.touches.length === 1) {
-                // Pan Move (Manual Scrolling)
-                // Kita menggeser container secara manual karena overlay memblokir scroll native
-                const deltaX = lastX - e.touches[0].pageX;
-                const deltaY = lastY - e.touches[0].pageY;
-                
-                pdfContainer.scrollLeft += deltaX;
-                pdfContainer.scrollTop += deltaY;
-                
-                lastX = e.touches[0].pageX;
-                lastY = e.touches[0].pageY;
-            }
-        }, { passive: false });
+        const gestureZone = document.getElementById('gestureZone'), pdfContainer = document.getElementById('pdfContainer');
+        let initialDistance = 0, initialZoomValue = 1, lastX = 0, lastY = 0;
+        gestureZone.addEventListener('touchstart', (e) => { if (e.touches.length === 2) { initialDistance = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY); initialZoomValue = currentZoom; } else if (e.touches.length === 1) { lastX = e.touches[0].pageX; lastY = e.touches[0].pageY; } }, { passive: false });
+        gestureZone.addEventListener('touchmove', (e) => { e.preventDefault(); if (e.touches.length === 2) { const currentDistance = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY); if (initialDistance > 0) { currentZoom = Math.min(Math.max(initialZoomValue * (currentDistance / initialDistance), 0.5), 6); document.getElementById('pdfFrame').style.transform = `scale(${currentZoom})`; } } else if (e.touches.length === 1) { pdfContainer.scrollLeft += (lastX - e.touches[0].pageX); pdfContainer.scrollTop += (lastY - e.touches[0].pageY); lastX = e.touches[0].pageX; lastY = e.touches[0].pageY; } }, { passive: false });
 
         initApp();
     </script>
