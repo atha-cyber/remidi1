@@ -66,11 +66,17 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
                         <div class="bg-white p-5 rounded-2xl shadow-sm border flex items-center justify-between">
                             <div><h4 class="font-bold text-slate-800 text-xs uppercase">Mode Paksa</h4><p class="text-[9px] text-gray-400">Abaikan jadwal ujian</p></div>
-                            <label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" id="toggleForceMode" class="sr-only peer" onchange="window.updateSettings()"><div class="w-10 h-5 bg-gray-200 rounded-full peer peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5"></div></label>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="toggleForceMode" class="sr-only peer" onchange="window.updateSettings()">
+                                <div class="w-10 h-5 bg-gray-200 rounded-full peer peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5"></div>
+                            </label>
                         </div>
                         <div class="bg-white p-5 rounded-2xl shadow-sm border flex items-center justify-between">
                             <div><h4 class="font-bold text-slate-800 text-xs uppercase">Anti-Curang</h4><p class="text-[9px] text-gray-400">Deteksi pindah tab</p></div>
-                            <label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" id="toggleAntiCheat" class="sr-only peer" onchange="window.updateSettings()"><div class="w-10 h-5 bg-gray-200 rounded-full peer peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5"></div></label>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="toggleAntiCheat" class="sr-only peer" onchange="window.updateSettings()">
+                                <div class="w-10 h-5 bg-gray-200 rounded-full peer peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5"></div>
+                            </label>
                         </div>
                     </div>
 
@@ -93,9 +99,9 @@
                 </section>
 
                 <section id="resultsSection" class="fade-in hidden">
-                    <div class="flex justify-between items-center mb-6">
-                        <h4 class="font-black text-slate-800 text-[10px] uppercase tracking-widest">Data Respon Siswa</h4>
-                        <button onclick="window.exportToExcel()" class="bg-green-600 text-white px-4 py-2 rounded-lg text-[10px] font-bold uppercase shadow-lg shadow-green-100"><i class="fas fa-file-excel mr-2"></i>Export Excel</button>
+                    <div class="flex justify-between items-center mb-6 text-xs font-bold">
+                        <h4 class="uppercase tracking-widest text-slate-800">Respon Siswa Terbaru</h4>
+                        <button onclick="window.exportToExcel()" class="bg-green-600 text-white px-4 py-2 rounded-lg uppercase shadow-lg shadow-green-100">Export CSV</button>
                     </div>
                     <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
                         <table class="w-full text-left text-[11px]">
@@ -104,7 +110,7 @@
                                     <th class="p-4">Timestamp</th>
                                     <th class="p-4">Nama Siswa</th>
                                     <th class="p-4 text-center">Kelas/Absen</th>
-                                    <th class="p-4">Mata Pelajaran</th>
+                                    <th class="p-4">Mapel</th>
                                     <th class="p-4 text-center">Skor</th>
                                     <th class="p-4 text-center">Logs</th>
                                 </tr>
@@ -115,34 +121,34 @@
                 </section>
 
                 <section id="subjectsSection" class="fade-in hidden">
-                    <button onclick="window.showAddModal()" class="mb-8 bg-blue-600 text-white px-6 py-3 rounded-xl font-bold text-[10px] uppercase shadow-xl shadow-blue-100 tracking-widest hover:scale-105 transition-transform"><i class="fas fa-plus-circle mr-2"></i>Daftarkan Mata Pelajaran Baru</button>
+                    <button onclick="window.showAddModal()" class="mb-8 bg-blue-600 text-white px-6 py-3 rounded-xl font-bold text-[10px] uppercase shadow-xl shadow-blue-100 hover:scale-105 transition-transform"><i class="fas fa-plus-circle mr-2"></i>Daftar Mapel Baru</button>
                     <div id="subjectGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
                 </section>
             </div>
         </main>
     </div>
 
-    <div id="subjectModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[400] hidden flex items-center justify-center p-6">
+    <div id="subjectModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[400] hidden flex items-center justify-center p-6 text-xs">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-xl overflow-hidden">
-            <div class="bg-slate-800 p-6 text-white flex justify-between items-center">
-                <h3 id="modalTitle" class="font-black text-[10px] uppercase tracking-widest">Konfigurasi Mata Pelajaran</h3>
-                <button onclick="window.closeModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors"><i class="fas fa-times"></i></button>
+            <div class="bg-slate-800 p-5 text-white flex justify-between items-center">
+                <h3 id="modalTitle" class="font-black uppercase tracking-widest">Manajemen Mata Pelajaran</h3>
+                <button onclick="window.closeModal()"><i class="fas fa-times"></i></button>
             </div>
-            <div class="p-8 grid grid-cols-1 gap-5">
+            <div class="p-8 space-y-4">
                 <input type="hidden" id="editIdx">
-                <div><label class="block text-[9px] font-black text-slate-400 uppercase mb-2">Nama Mata Pelajaran</label><input type="text" id="subjName" class="w-full p-4 bg-slate-50 border-2 rounded-2xl focus:border-blue-500 outline-none font-black text-slate-700 uppercase" placeholder="CONTOH: MATEMATIKA - IX"></div>
-                <div><label class="block text-[9px] font-black text-slate-400 uppercase mb-2">Link PDF Soal (Google Drive)</label><input type="text" id="subjUrl" class="w-full p-4 bg-slate-50 border-2 rounded-2xl focus:border-blue-500 outline-none text-xs" placeholder="Pastikan link publik/preview"></div>
+                <div><label class="block font-bold text-slate-400 uppercase mb-1">Nama Mapel</label><input type="text" id="subjName" class="w-full p-3 bg-slate-50 border rounded-xl uppercase"></div>
+                <div><label class="block font-bold text-slate-400 uppercase mb-1">Link Drive Soal</label><input type="text" id="subjUrl" class="w-full p-3 bg-slate-50 border rounded-xl"></div>
                 <div class="grid grid-cols-2 gap-4">
-                    <div><label class="block text-[9px] font-black text-slate-400 uppercase mb-2">Jadwal Mulai</label><input type="datetime-local" id="subjStart" class="w-full p-4 bg-slate-50 border-2 rounded-2xl focus:border-blue-500 outline-none text-xs"></div>
-                    <div><label class="block text-[9px] font-black text-slate-400 uppercase mb-2">Jadwal Selesai</label><input type="datetime-local" id="subjEnd" class="w-full p-4 bg-slate-50 border-2 rounded-2xl focus:border-blue-500 outline-none text-xs"></div>
+                    <div><label class="block font-bold text-slate-400 uppercase mb-1">Mulai</label><input type="datetime-local" id="subjStart" class="w-full p-3 bg-slate-50 border rounded-xl"></div>
+                    <div><label class="block font-bold text-slate-400 uppercase mb-1">Selesai</label><input type="datetime-local" id="subjEnd" class="w-full p-3 bg-slate-50 border rounded-xl"></div>
                 </div>
                 <div class="grid grid-cols-4 gap-4">
-                    <div class="col-span-1"><label class="block text-[9px] font-black text-slate-400 uppercase mb-2">Jml Soal</label><input type="number" id="subjCount" class="w-full p-4 bg-slate-50 border-2 rounded-2xl focus:border-blue-500 outline-none font-bold text-center" placeholder="40"></div>
-                    <div class="col-span-3"><label class="block text-[9px] font-black text-slate-400 uppercase mb-2">Kunci Jawaban (Urut tanpa spasi)</label><input type="text" id="subjKey" class="w-full p-4 bg-slate-50 border-2 rounded-2xl focus:border-blue-500 outline-none font-mono tracking-[0.4em] uppercase" placeholder="ABCD..."></div>
+                    <div class="col-span-1"><label class="block font-bold text-slate-400 uppercase mb-1">Jml Soal</label><input type="number" id="subjCount" class="w-full p-3 bg-slate-50 border rounded-xl text-center"></div>
+                    <div class="col-span-3"><label class="block font-bold text-slate-400 uppercase mb-1">Kunci Jawaban</label><input type="text" id="subjKey" class="w-full p-3 bg-slate-50 border rounded-xl font-mono tracking-widest uppercase"></div>
                 </div>
-                <div class="pt-4 flex gap-4">
-                    <button onclick="window.closeModal()" class="flex-1 py-4 text-slate-400 font-bold uppercase text-[10px] tracking-widest hover:bg-slate-50 rounded-2xl transition-colors">Batal</button>
-                    <button onclick="window.saveSubject()" class="flex-1 py-4 bg-blue-600 text-white font-black uppercase text-[10px] tracking-widest rounded-2xl shadow-xl shadow-blue-100 hover:bg-blue-700 transition-all">Simpan ke Cloud</button>
+                <div class="pt-4 flex gap-3">
+                    <button onclick="window.closeModal()" class="flex-1 py-3 text-slate-400 font-bold uppercase">Batal</button>
+                    <button onclick="window.saveSubject()" class="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-lg">SIMPAN</button>
                 </div>
             </div>
         </div>
@@ -153,14 +159,14 @@
         import { getFirestore, doc, setDoc, getDoc, onSnapshot, collection, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // CONFIG PLACEHOLDERS - MASUKKAN DI VERCEL ENVIRONMENT VARIABLES
+        // MENGGUNAKAN TARGET SUNTIKAN %% UNTUK VERCEL
         const firebaseConfig = {
-            apiKey: "VERCEL_FIREBASE_API_KEY",
-            authDomain: "VERCEL_FIREBASE_AUTH_DOMAIN",
-            projectId: "VERCEL_FIREBASE_PROJECT_ID",
-            storageBucket: "VERCEL_FIREBASE_STORAGE_BUCKET",
-            messagingSenderId: "VERCEL_FIREBASE_MESSAGING_SENDER_ID",
-            appId: "VERCEL_FIREBASE_APP_ID"
+            apiKey: "%%VERCEL_FIREBASE_API_KEY%%",
+            authDomain: "%%VERCEL_FIREBASE_AUTH_DOMAIN%%",
+            projectId: "%%VERCEL_FIREBASE_PROJECT_ID%%",
+            storageBucket: "%%VERCEL_FIREBASE_STORAGE_BUCKET%%",
+            messagingSenderId: "%%VERCEL_FIREBASE_MESSAGING_SENDER_ID%%",
+            appId: "%%VERCEL_FIREBASE_APP_ID%%"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -169,102 +175,82 @@
         const CONFIG_DOC = 'cbt_apps/settings_v2';
         const RES_COLL = 'cbt_results';
         
-        // PASSWORD ADMIN PLACEHOLDER
-        const ADMIN_PASSWORD = "VERCEL_ADMIN_PASSWORD";
+        // TARGET SUNTIKAN PASSWORD
+        const ADMIN_PASSWORD = "%%VERCEL_ADMIN_PASSWORD%%";
 
-        let subjects = [], forcedMode = false, showScore = false, antiCheat = true, geoCheck = false;
+        let subjects = [], resultsData = [];
         let schoolLat = -7.927, schoolLng = 110.2978, allowedRadius = 300;
-        let resultsData = [];
 
         window.checkLogin = () => {
-            const input = document.getElementById('adminPassword').value;
-            if (input === ADMIN_PASSWORD) {
+            if (document.getElementById('adminPassword').value === ADMIN_PASSWORD) {
                 document.getElementById('loginView').classList.add('hidden');
                 document.getElementById('mainDashboard').classList.remove('hidden');
                 init();
             } else {
-                alert("KODE AKSES SALAH!");
+                alert("AKSES DITOLAK!");
                 document.getElementById('adminPassword').value = '';
             }
         };
 
         async function init() {
             await signInAnonymously(auth);
-            
-            // Sync Settings
             onSnapshot(doc(db, CONFIG_DOC), (snap) => {
                 if(snap.exists()) {
                     const d = snap.data();
                     subjects = d.subjects || [];
-                    forcedMode = d.forcedMode || false;
-                    showScore = d.showScore || false;
-                    antiCheat = d.antiCheatEnabled !== false;
-                    geoCheck = d.geoCheckEnabled || false;
-                    schoolLat = d.schoolLat || -7.927;
-                    schoolLng = d.schoolLng || 110.2978;
-                    allowedRadius = d.allowedRadius || 300;
-
-                    document.getElementById('toggleForceMode').checked = forcedMode;
-                    document.getElementById('toggleAntiCheat').checked = antiCheat;
-                    document.getElementById('toggleGeoCheck').checked = geoCheck;
-                    document.getElementById('inputLat').value = schoolLat;
-                    document.getElementById('inputLng').value = schoolLng;
-                    document.getElementById('inputRadius').value = allowedRadius;
-
+                    document.getElementById('toggleForceMode').checked = d.forcedMode || false;
+                    document.getElementById('toggleAntiCheat').checked = d.antiCheatEnabled !== false;
+                    document.getElementById('toggleGeoCheck').checked = d.geoCheckEnabled || false;
+                    document.getElementById('inputLat').value = d.schoolLat || schoolLat;
+                    document.getElementById('inputLng').value = d.schoolLng || schoolLng;
+                    document.getElementById('inputRadius').value = d.allowedRadius || allowedRadius;
                     window.renderAdminTabs();
                 }
             });
 
-            // Sync Results
-            onSnapshot(query(collection(db, RES_COLL), orderBy('time', 'desc'), limit(200)), (snap) => {
+            onSnapshot(query(collection(db, RES_COLL), orderBy('time', 'desc'), limit(150)), (snap) => {
                 resultsData = [];
-                const table = document.getElementById('resultsTable');
-                table.innerHTML = '';
+                const table = document.getElementById('resultsTable'); table.innerHTML = '';
                 snap.forEach(doc => {
-                    const d = doc.data();
-                    resultsData.push(d);
-                    table.innerHTML += `<tr class="hover:bg-slate-50 transition-colors">
-                        <td class="p-4 font-mono text-[9px] text-gray-400">${d.time || '-'}</td>
-                        <td class="p-4 font-black text-slate-700 uppercase">${d.name || '-'}</td>
-                        <td class="p-4 text-center font-bold text-blue-600">${d.class || '-'}/${d.noAbsen || '-'}</td>
-                        <td class="p-4 font-bold text-slate-500 uppercase text-[9px]">${d.mapel || '-'}</td>
-                        <td class="p-4 text-center"><span class="bg-slate-800 text-white px-2 py-1 rounded font-black text-[10px]">${d.score || 0}</span></td>
-                        <td class="p-4 text-center font-bold ${d.violations > 0 ? 'text-red-500' : 'text-gray-200'}"><i class="fas fa-user-secret"></i> ${d.violations || 0}</td>
+                    const d = doc.data(); resultsData.push(d);
+                    table.innerHTML += `<tr class="hover:bg-slate-50">
+                        <td class="p-4 font-mono text-[9px] text-gray-400">${d.time}</td>
+                        <td class="p-4 font-bold text-slate-700 uppercase">${d.name}</td>
+                        <td class="p-4 text-center font-bold text-blue-600">${d.class}/${d.noAbsen}</td>
+                        <td class="p-4 font-bold text-slate-500 uppercase text-[9px]">${d.mapel}</td>
+                        <td class="p-4 text-center"><span class="bg-slate-800 text-white px-2 py-1 rounded font-black">${d.score}</span></td>
+                        <td class="p-4 text-center font-bold ${d.violations > 0 ? 'text-red-500' : 'text-gray-200'}"><i class="fas fa-user-secret"></i> ${d.violations}</td>
                     </tr>`;
                 });
             });
         }
 
         window.updateSettings = async () => {
-            const data = {
+            await setDoc(doc(db, CONFIG_DOC), {
                 subjects,
                 forcedMode: document.getElementById('toggleForceMode').checked,
                 antiCheatEnabled: document.getElementById('toggleAntiCheat').checked,
-                showScore: true, // Always show for internal
                 geoCheckEnabled: document.getElementById('toggleGeoCheck').checked,
-                schoolLat: parseFloat(document.getElementById('inputLat').value) || schoolLat,
-                schoolLng: parseFloat(document.getElementById('inputLng').value) || schoolLng,
-                allowedRadius: parseInt(document.getElementById('inputRadius').value) || allowedRadius
-            };
-            await setDoc(doc(db, CONFIG_DOC), data);
+                schoolLat: parseFloat(document.getElementById('inputLat').value),
+                schoolLng: parseFloat(document.getElementById('inputLng').value),
+                allowedRadius: parseInt(document.getElementById('inputRadius').value)
+            }, { merge: true });
             showSaved();
         };
 
         window.renderAdminTabs = () => {
-            const grid = document.getElementById('subjectGrid');
-            grid.innerHTML = '';
+            const grid = document.getElementById('subjectGrid'); grid.innerHTML = '';
             subjects.forEach((s, i) => {
-                grid.innerHTML += `<div class="bg-white p-6 rounded-3xl border shadow-sm relative group hover:shadow-md transition-all">
+                grid.innerHTML += `<div class="bg-white p-5 rounded-2xl border shadow-sm relative group">
                     <div class="absolute top-4 right-4 flex gap-1 opacity-0 group-hover:opacity-100 transition-all scale-75">
-                        <button onclick="window.editSubject(${i})" class="w-10 h-10 bg-blue-50 text-blue-600 rounded-full hover:bg-blue-600 hover:text-white transition-all"><i class="fas fa-edit"></i></button>
-                        <button onclick="window.deleteSubject(${i})" class="w-10 h-10 bg-red-50 text-red-600 rounded-full hover:bg-red-600 hover:text-white transition-all"><i class="fas fa-trash-alt"></i></button>
+                        <button onclick="window.editSubject(${i})" class="w-8 h-8 bg-blue-50 text-blue-600 rounded-full"><i class="fas fa-edit"></i></button>
+                        <button onclick="window.deleteSubject(${i})" class="w-8 h-8 bg-red-50 text-red-600 rounded-full"><i class="fas fa-trash-alt"></i></button>
                     </div>
-                    <div class="mb-4 w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-300"><i class="fas fa-book-reader"></i></div>
-                    <h4 class="font-black text-slate-800 uppercase text-xs mb-1 truncate pr-16">${s.name}</h4>
-                    <p class="text-[8px] text-gray-400 font-bold mb-4 uppercase tracking-widest">${s.qCount || 0} Soal • Kunci: ${s.key ? 'Tersedia' : 'Kosong'}</p>
-                    <div class="pt-4 border-t grid grid-cols-2 gap-4">
-                        <div class="text-[8px] font-bold text-gray-400 uppercase">Start: <span class="block text-slate-600 font-black mt-0.5">${s.start ? s.start.replace('T',' ') : '-'}</span></div>
-                        <div class="text-[8px] font-bold text-gray-400 uppercase">End: <span class="block text-slate-600 font-black mt-0.5">${s.end ? s.end.replace('T',' ') : '-'}</span></div>
+                    <h4 class="font-bold text-slate-800 uppercase text-[11px] mb-1 truncate pr-16">${s.name}</h4>
+                    <p class="text-[9px] text-gray-400 font-bold mb-4 uppercase">${s.qCount} Soal</p>
+                    <div class="pt-4 border-t grid grid-cols-2 gap-2 text-[8px] font-bold text-gray-400 uppercase">
+                        <div>Start: <span class="block text-slate-600">${s.start || '-'}</span></div>
+                        <div>End: <span class="block text-slate-600">${s.end || '-'}</span></div>
                     </div>
                 </div>`;
             });
@@ -273,40 +259,30 @@
         window.saveSubject = async () => {
             const name = document.getElementById('subjName').value.trim();
             const url = document.getElementById('subjUrl').value.trim();
-            const start = document.getElementById('subjStart').value;
-            const end = document.getElementById('subjEnd').value;
-            const key = document.getElementById('subjKey').value.toUpperCase().replace(/\s/g, '');
-            const count = parseInt(document.getElementById('subjCount').value) || 40;
             const idx = document.getElementById('editIdx').value;
-
-            if(!name || !url) return alert("DATA TIDAK LENGKAP!");
-
-            const newObj = { name, url, start, end, key, qCount: count, isActive: true };
-            if (idx === "") subjects.push(newObj); else subjects[idx] = newObj;
-
+            if(!name || !url) return alert("LENGKAPI DATA!");
+            const obj = { 
+                name, url, 
+                start: document.getElementById('subjStart').value, 
+                end: document.getElementById('subjEnd').value, 
+                key: document.getElementById('subjKey').value.toUpperCase().replace(/\s/g, ''), 
+                qCount: parseInt(document.getElementById('subjCount').value) || 40,
+                isActive: true
+            };
+            if (idx === "") subjects.push(obj); else subjects[idx] = obj;
             await setDoc(doc(db, CONFIG_DOC), { subjects }, { merge: true });
-            window.closeModal();
-            showSaved();
+            window.closeModal(); showSaved();
         };
 
         window.deleteSubject = async (idx) => {
-            if(confirm(`Hapus ${subjects[idx].name}?`)) {
-                subjects.splice(idx, 1);
-                await setDoc(doc(db, CONFIG_DOC), { subjects }, { merge: true });
-                showSaved();
-            }
+            if(confirm("Hapus mapel?")) { subjects.splice(idx, 1); await setDoc(doc(db, CONFIG_DOC), { subjects }, { merge: true }); showSaved(); }
         };
 
         window.editSubject = (idx) => {
-            const s = subjects[idx];
-            document.getElementById('editIdx').value = idx;
-            document.getElementById('modalTitle').innerText = "Edit Pengaturan Ujian";
-            document.getElementById('subjName').value = s.name;
-            document.getElementById('subjUrl').value = s.url;
-            document.getElementById('subjStart').value = s.start || '';
-            document.getElementById('subjEnd').value = s.end || '';
-            document.getElementById('subjKey').value = s.key || '';
-            document.getElementById('subjCount').value = s.qCount || 40;
+            const s = subjects[idx]; document.getElementById('editIdx').value = idx;
+            document.getElementById('subjName').value = s.name; document.getElementById('subjUrl').value = s.url;
+            document.getElementById('subjStart').value = s.start || ''; document.getElementById('subjEnd').value = s.end || '';
+            document.getElementById('subjKey').value = s.key || ''; document.getElementById('subjCount').value = s.qCount || 40;
             document.getElementById('subjectModal').classList.remove('hidden');
         };
 
@@ -317,49 +293,32 @@
             });
             document.getElementById(`${tab}Section`).classList.remove('hidden');
             document.getElementById(`tab-${tab}`).classList.add('active-tab');
-            const titles = { general: 'Konfigurasi Sistem', subjects: 'Manajemen Bank Soal', results: 'Rekapitulasi Respon Siswa' };
-            document.getElementById('currentTabTitle').innerText = titles[tab];
         };
 
-        window.showAddModal = () => {
-            document.getElementById('editIdx').value = "";
-            document.getElementById('modalTitle').innerText = "Registrasi Mata Pelajaran";
-            document.getElementById('subjName').value = "";
-            document.getElementById('subjUrl').value = "";
-            document.getElementById('subjKey').value = "";
-            document.getElementById('subjectModal').classList.remove('hidden');
+        window.showAddModal = () => { 
+            document.getElementById('editIdx').value = ""; document.getElementById('subjName').value = ""; 
+            document.getElementById('subjectModal').classList.remove('hidden'); 
         };
-
         window.closeModal = () => document.getElementById('subjectModal').classList.add('hidden');
-        function showSaved() { const s = document.getElementById('saveStatus'); s.style.opacity = '1'; setTimeout(() => s.style.opacity = '0', 2500); }
+        function showSaved() { const s = document.getElementById('saveStatus'); s.style.opacity = '1'; setTimeout(() => s.style.opacity = '0', 2000); }
+        
+        window.testMyLocation = () => {
+            const res = document.getElementById('testResult'); res.classList.remove('hidden'); res.innerHTML = "Mencari GPS...";
+            navigator.geolocation.getCurrentPosition((pos) => {
+                const lat2 = parseFloat(document.getElementById('inputLat').value), lon2 = parseFloat(document.getElementById('inputLng').value);
+                const R = 6371e3, φ1 = pos.coords.latitude * Math.PI/180, φ2 = lat2 * Math.PI/180, Δφ = (lat2-pos.coords.latitude) * Math.PI/180, Δλ = (lon2-pos.coords.longitude) * Math.PI/180;
+                const a = Math.sin(Δφ/2)**2 + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ/2)**2;
+                const d = Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+                res.innerHTML = `Jarak: ${d} Meter. Status: ${d <= parseInt(document.getElementById('inputRadius').value) ? 'AMAN' : 'DILUAR RADIUS'}`;
+            }, (err) => alert(err.message));
+        };
 
         window.exportToExcel = () => {
-            let csv = 'Timestamp,Nama,Kelas,Absen,Mapel,Benar,Total,Skor,Pelanggaran\n';
-            resultsData.forEach(r => {
-                csv += `${r.time},${r.name},${r.class},${r.noAbsen},${r.mapel},${r.correct},${r.totalSoal},${r.score},${r.violations}\n`;
-            });
+            let csv = 'Timestamp,Nama,Kelas,Absen,Mapel,Skor\n';
+            resultsData.forEach(r => csv += `${r.time},${r.name},${r.class},${r.noAbsen},${r.mapel},${r.score}\n`);
             const blob = new Blob([csv], { type: 'text/csv' });
             const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.setAttribute('hidden', ''); a.setAttribute('href', url); a.setAttribute('download', 'Rekap_CBT_SMP4.csv');
-            document.body.appendChild(a); a.click(); document.body.removeChild(a);
-        };
-
-        window.testMyLocation = () => {
-            const res = document.getElementById('testResult'); res.classList.remove('hidden');
-            res.className = "mt-3 p-3 rounded-lg text-[10px] font-bold text-center italic bg-yellow-50 text-yellow-600";
-            res.innerHTML = "MENUNGGU GPS...";
-            navigator.geolocation.getCurrentPosition((pos) => {
-                const lat1 = pos.coords.latitude, lon1 = pos.coords.longitude;
-                const lat2 = parseFloat(document.getElementById('inputLat').value), lon2 = parseFloat(document.getElementById('inputLng').value);
-                const R = 6371e3, φ1 = lat1 * Math.PI/180, φ2 = lat2 * Math.PI/180, Δφ = (lat2-lat1) * Math.PI/180, Δλ = (lon2-lon1) * Math.PI/180;
-                const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ/2) * Math.sin(Δλ/2);
-                const d = Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
-                const radius = parseInt(document.getElementById('inputRadius').value);
-                const safe = d <= radius;
-                res.className = `mt-3 p-3 rounded-lg text-[10px] font-bold text-center ${safe ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`;
-                res.innerHTML = `JARAK ANDA: ${d} METER DARI SEKOLAH. STATUS: ${safe ? 'DALAM RADIUS (AMAN)' : 'DILUAR RADIUS (TERKUNCI)'}`;
-            }, (err) => { res.innerHTML = "GPS GAGAL: " + err.message; });
+            const a = document.createElement('a'); a.href = url; a.download = 'Rekap.csv'; a.click();
         };
     </script>
 </body>
